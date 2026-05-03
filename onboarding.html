@@ -1,0 +1,1836 @@
+<!DOCTYPE html>
+<!--
+════════════════════════════════════════════════════════════════════
+  STARTUP KUNDALI — ONBOARDING v3
+  Serve at: /onboarding
+  ~10 minutes · 22 questions · Mobile-first · Typeform-style
+
+  CONFIG: update the CFG object in the <script> block below
+  IMPLEMENTATION: see IMPLEMENTATION.md for Supabase + Cashfree setup
+════════════════════════════════════════════════════════════════════
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Get Your Startup Kundali</title>
+<meta name="robots" content="noindex,nofollow">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ── RESET ── */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{font-size:16px;height:100%}
+body{
+  background:#060608;color:#F0EAE0;
+  font-family:'Sora',sans-serif;
+  min-height:100dvh;overflow:hidden;
+  overscroll-behavior:none;
+}
+:root{
+  --gold:#C8A84B;--gold-lt:#E4C76A;
+  --green:#28B485;--red:#D04545;--saffron:#C85A20;
+  --bg:#060608;--bg2:#0A0A10;--bg3:#111118;
+  --bdr:rgba(200,168,75,.13);--bdr2:rgba(200,168,75,.32);
+  --t2:#6A6258;--t3:#A89E90;
+  --ff:'Sora',sans-serif;--ffd:'Lora',serif;--ffm:'JetBrains Mono',monospace;
+  --pad:clamp(1.4rem,5vw,3.5rem);
+}
+::selection{background:rgba(200,168,75,.2);color:#fff}
+::-webkit-scrollbar{display:none}
+
+/* Grain */
+body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.04'/%3E%3C/svg%3E");
+  background-size:256px;opacity:.4}
+
+/* ── PROGRESS ── */
+.prog{position:fixed;top:0;left:0;right:0;z-index:200;height:3px;background:rgba(200,168,75,.08)}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--gold));
+  transition:width .5s cubic-bezier(.4,0,.2,1);width:0%}
+
+/* milestone pop */
+.prog-label{
+  position:fixed;top:6px;left:50%;transform:translateX(-50%);
+  z-index:201;pointer-events:none;
+  display:flex;align-items:center;gap:.4rem;
+  background:rgba(40,180,133,.15);border:1px solid rgba(40,180,133,.35);
+  border-radius:20px;padding:.22rem .75rem;
+  font-family:var(--ffm);font-size:.58rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--green);
+  opacity:0;transition:opacity .4s;
+}
+.prog-label.show{opacity:1}
+.prog-dot{width:5px;height:5px;border-radius:50%;background:var(--green);flex-shrink:0}
+
+/* ── TOP BAR ── */
+.top{position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.9rem var(--pad);pointer-events:none}
+.top-logo{font-family:var(--ffd);font-size:.9rem;font-weight:600;color:var(--gold);
+  text-decoration:none;pointer-events:all}
+.top-time{font-family:var(--ffm);font-size:.6rem;color:var(--t2);
+  letter-spacing:.12em;text-transform:uppercase}
+
+/* ── STAGE ── */
+.stage{
+  position:fixed;inset:0;z-index:10;
+  display:flex;align-items:flex-start;justify-content:center;
+  padding:5rem var(--pad) 5.5rem;
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+}
+/* Centre card vertically when content is short */
+.stage::before{content:'';flex:1;min-height:0}
+.stage::after{content:'';flex:1;min-height:0}
+
+/* ── Q CARD ── */
+.qcard{
+  position:relative;width:100%;max-width:620px;
+  display:flex;flex-direction:column;gap:0;
+  will-change:transform,opacity;
+  margin:auto 0; /* vertical centre within flex */
+  padding-bottom:1rem; /* breathing room above nav arrows */
+}
+.qcard.e-right{animation:eR .42s cubic-bezier(.4,0,.2,1) both}
+.qcard.e-left{animation:eL .42s cubic-bezier(.4,0,.2,1) both}
+.qcard.x-left{animation:xL .35s cubic-bezier(.4,0,.2,1) both}
+.qcard.x-right{animation:xR .35s cubic-bezier(.4,0,.2,1) both}
+@keyframes eR{from{transform:translateX(55px) scale(.97);opacity:0}to{transform:none;opacity:1}}
+@keyframes eL{from{transform:translateX(-55px) scale(.97);opacity:0}to{transform:none;opacity:1}}
+@keyframes xL{from{opacity:1;transform:none}to{opacity:0;transform:translateX(-55px) scale(.97)}}
+@keyframes xR{from{opacity:1;transform:none}to{opacity:0;transform:translateX(55px) scale(.97)}}
+
+/* Q text */
+.q-text{font-family:var(--ffd);font-size:clamp(1.45rem,4.2vw,2rem);
+  font-weight:600;color:#fff;line-height:1.22;margin-bottom:.35rem}
+.q-text em{font-style:italic;color:var(--gold)}
+.q-sub{font-size:clamp(.78rem,2.1vw,.86rem);color:var(--t3);
+  margin-bottom:1.45rem;line-height:1.72}
+
+/* ── INPUTS ── */
+.q-inp{width:100%;background:transparent;border:none;
+  border-bottom:2px solid rgba(200,168,75,.28);color:#fff;
+  font-family:var(--ff);font-size:clamp(1rem,2.8vw,1.2rem);font-weight:400;
+  padding:.55rem 0 .65rem;outline:none;transition:border-color .2s;
+  caret-color:var(--gold)}
+.q-inp:focus{border-bottom-color:var(--gold)}
+.q-inp::placeholder{color:var(--t2)}
+.q-inp.err{border-bottom-color:var(--red)}
+.q-inp-wrap{position:relative}
+.q-prefix{position:absolute;left:0;bottom:.65rem;
+  font-family:var(--ff);font-size:clamp(1rem,2.8vw,1.2rem);color:var(--t3);pointer-events:none}
+.q-inp.pfx{padding-left:3.2rem}
+
+.q-ta{width:100%;background:var(--bg3);border:1px solid var(--bdr);
+  border-radius:4px;color:#fff;font-family:var(--ff);
+  font-size:clamp(.88rem,2.3vw,.97rem);padding:.88rem 1rem;outline:none;
+  resize:none;min-height:100px;transition:border-color .2s;
+  caret-color:var(--gold);line-height:1.72}
+.q-ta:focus{border-color:var(--bdr2)}
+.q-ta::placeholder{color:var(--t2)}
+.cc{font-family:var(--ffm);font-size:.6rem;color:var(--t2);text-align:right;margin-top:.3rem}
+
+/* ── CHIPS ── */
+.chips{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.1rem}
+.chip{position:relative;cursor:pointer}
+.chip input{position:absolute;opacity:0;width:0;height:0}
+.chip-b{display:inline-flex;align-items:center;gap:.42rem;
+  padding:.58rem 1rem;border:1px solid var(--bdr);border-radius:40px;
+  font-size:clamp(.75rem,1.9vw,.84rem);font-weight:500;color:var(--t3);
+  background:var(--bg3);transition:all .16s;white-space:nowrap;
+  user-select:none;-webkit-user-select:none}
+.chip-b:hover{border-color:var(--bdr2);color:#fff}
+.chip input:checked+.chip-b{border-color:var(--gold);color:var(--gold);background:rgba(200,168,75,.08)}
+.chip-e{font-size:.9rem}
+
+/* Other-sector text reveal */
+.other-reveal{overflow:hidden;max-height:0;opacity:0;
+  transition:max-height .38s cubic-bezier(.4,0,.2,1),opacity .3s;margin-top:0}
+.other-reveal.show{max-height:160px;opacity:1;margin-top:.85rem}
+
+/* ── SHAREHOLDER SECTION ── */
+.sh-wrap{display:flex;flex-direction:column;gap:.7rem;margin-top:0}
+.sh-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:6px;overflow:hidden;transition:border-color .2s}
+.sh-card:focus-within{border-color:var(--bdr2)}
+.sh-hdr{display:flex;justify-content:space-between;align-items:center;
+  padding:.75rem 1rem;background:var(--bg3);border-bottom:1px solid var(--bdr)}
+.sh-lbl{font-family:var(--ffm);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+.sh-rm{background:none;border:none;color:var(--t2);cursor:pointer;font-size:.72rem;
+  padding:.2rem .4rem;border-radius:2px;transition:color .2s;font-family:var(--ff)}
+.sh-rm:hover{color:var(--red)}
+.sh-body{padding:.85rem 1rem;display:flex;flex-direction:column;gap:.7rem}
+.sh-field label{font-family:var(--ffm);font-size:.57rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--t2);display:block;margin-bottom:.32rem}
+.sh-row{display:grid;grid-template-columns:1fr 1fr;gap:.65rem}
+@media(max-width:460px){.sh-row{grid-template-columns:1fr}}
+.sh-inp,.sh-sel{width:100%;background:var(--bg3);border:1px solid var(--bdr);
+  color:#fff;font-family:var(--ff);font-size:.85rem;padding:.62rem .8rem;
+  border-radius:3px;outline:none;transition:border-color .2s}
+.sh-inp:focus,.sh-sel:focus{border-color:var(--bdr2)}
+.sh-inp::placeholder{color:var(--t2)}
+.sh-sel{appearance:none;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='5'%3E%3Cpath d='M0 0l4.5 5L9 0z' fill='%236A6258'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right .7rem center}
+.sh-sel option{background:#0A0A10}
+.sh-caste-note{font-size:.67rem;color:var(--t2);line-height:1.55;
+  padding:.45rem .65rem;background:rgba(200,168,75,.04);
+  border-left:2px solid rgba(200,168,75,.2);border-radius:0 2px 2px 0;margin-top:.2rem}
+.add-sh{display:flex;align-items:center;justify-content:center;gap:.5rem;
+  width:100%;background:transparent;border:1px dashed rgba(200,168,75,.25);
+  color:var(--gold);padding:.65rem;border-radius:4px;
+  font-family:var(--ff);font-size:.82rem;cursor:pointer;
+  transition:all .18s;margin-top:.5rem}
+.add-sh:hover{border-color:var(--gold);background:rgba(200,168,75,.05)}
+
+/* ── COND REVEAL ── */
+.cond{overflow:hidden;max-height:0;opacity:0;
+  transition:max-height .45s cubic-bezier(.4,0,.2,1),opacity .35s}
+.cond.show{max-height:1200px;opacity:1}
+.cond-inner{display:flex;flex-direction:column;gap:1.1rem;margin-top:1.1rem}
+.cond-back{background:none;border:none;color:var(--t2);font-family:var(--ffm);
+  font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;
+  padding:.25rem 0;transition:color .18s;text-align:left}
+.cond-back:hover{color:var(--gold)}
+
+/* ── QUOTE ── */
+.quote{margin-top:1.5rem;padding:.8rem 1rem;
+  border-left:2px solid rgba(200,168,75,.3);
+  background:rgba(200,168,75,.04);border-radius:0 4px 4px 0;
+  animation:qfade .55s .18s both}
+@keyframes qfade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.quote-t{font-family:var(--ffd);font-style:italic;
+  font-size:clamp(.78rem,2.1vw,.86rem);color:var(--t3);line-height:1.68}
+.quote-s{font-family:var(--ffm);font-size:.58rem;color:var(--gold);
+  letter-spacing:.07em;margin-top:.3rem}
+
+/* ── CTA ── */
+.cta-row{margin-top:1.7rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.cta{display:inline-flex;align-items:center;gap:.6rem;
+  background:var(--gold);color:#000;padding:.78rem 1.75rem;border-radius:3px;
+  border:none;font-family:var(--ff);font-size:.85rem;font-weight:700;
+  letter-spacing:.05em;text-transform:uppercase;cursor:pointer;
+  transition:all .17s;align-self:flex-start}
+.cta:hover{background:var(--gold-lt);transform:translateY(-1px)}
+.cta:active{transform:scale(.97)}
+.cta:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.cta-hint{font-family:var(--ffm);font-size:.6rem;color:var(--t2);letter-spacing:.05em}
+.cta-hint kbd{padding:.1rem .3rem;border:1px solid var(--bdr2);border-radius:2px;
+  font-family:var(--ffm);font-size:.56rem;color:var(--t3)}
+
+/* ── NAV ARROWS ── */
+.nav{position:fixed;bottom:1.6rem;right:var(--pad);z-index:90;display:flex;gap:.45rem}
+.arr{width:40px;height:40px;border-radius:50%;border:1px solid var(--bdr);
+  background:var(--bg2);color:var(--t2);display:flex;align-items:center;
+  justify-content:center;cursor:pointer;transition:all .17s;font-size:.9rem;
+  font-family:var(--ff)}
+.arr:hover:not(:disabled){border-color:var(--bdr2);color:var(--gold)}
+.arr:disabled{opacity:.22;cursor:not-allowed}
+
+/* ── PAYMENT SCREEN ── */
+.pay-screen{position:fixed;inset:0;z-index:300;background:var(--bg);
+  display:none;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.pay-screen.open{display:block}
+.pay-inner{max-width:480px;margin:0 auto;padding:3rem var(--pad) 4rem}
+.pay-back{display:flex;align-items:center;gap:.38rem;background:none;border:none;
+  color:var(--t2);font-family:var(--ffm);font-size:.62rem;letter-spacing:.09em;
+  text-transform:uppercase;cursor:pointer;transition:color .2s;margin-bottom:1.8rem}
+.pay-back:hover{color:var(--gold)}
+.pay-title{font-family:var(--ffd);font-size:clamp(1.5rem,4vw,1.9rem);
+  font-weight:600;color:#fff;margin-bottom:.35rem}
+.pay-title em{font-style:italic;color:var(--gold)}
+.pay-sub{font-size:.84rem;color:var(--t3);line-height:1.72;margin-bottom:1.6rem}
+
+.pay-sum{background:var(--bg3);border:1px solid var(--bdr);border-radius:4px;
+  overflow:hidden;margin-bottom:1.2rem}
+.psr{display:flex;justify-content:space-between;align-items:flex-start;
+  padding:.68rem 1rem;border-bottom:1px solid var(--bdr);font-size:.8rem;gap:1rem}
+.psr:last-child{border-bottom:none}
+.psr-k{color:var(--t2);flex-shrink:0;width:110px}
+.psr-v{color:#fff;font-weight:500;text-align:right;line-height:1.5}
+
+.pay-price{display:flex;align-items:center;justify-content:space-between;
+  padding:1rem;background:rgba(200,168,75,.05);border:1px solid var(--bdr);
+  border-radius:4px;margin-bottom:1.1rem}
+.pp-label{font-size:.83rem;color:var(--t3)}
+.pp-was{display:block;font-size:.73rem;color:var(--t2);text-decoration:line-through;margin-top:.12rem}
+.pp-val{font-family:var(--ffd);font-size:2.1rem;font-weight:600;color:var(--gold)}
+
+.pay-guar{display:flex;align-items:flex-start;gap:.75rem;padding:.85rem 1rem;
+  background:rgba(40,180,133,.05);border:1px solid rgba(40,180,133,.18);
+  border-radius:4px;font-size:.78rem;color:var(--t3);line-height:1.65;margin-bottom:1.2rem}
+.pay-guar-icon{font-size:1.1rem;flex-shrink:0;margin-top:.05rem}
+
+.pay-btn{width:100%;background:var(--gold);color:#000;border:none;padding:.98rem;
+  border-radius:3px;font-family:var(--ff);font-size:.9rem;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .18s}
+.pay-btn:hover{background:var(--gold-lt);transform:translateY(-1px)}
+.pay-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.pay-secure{display:flex;align-items:center;justify-content:center;gap:.42rem;
+  font-family:var(--ffm);font-size:.58rem;color:var(--t2);letter-spacing:.07em;
+  text-transform:uppercase;margin-top:.85rem}
+
+/* ── SUCCESS ── */
+.suc-screen{position:fixed;inset:0;z-index:400;background:var(--bg);
+  display:none;overflow-y:auto}
+.suc-screen.open{display:flex;align-items:flex-start;justify-content:center;padding:3rem var(--pad)}
+.suc-inner{max-width:420px;width:100%;text-align:center;padding:2rem 0}
+.suc-orb{width:72px;height:72px;border-radius:50%;margin:0 auto 1.4rem;
+  background:rgba(40,180,133,.1);border:2px solid rgba(40,180,133,.3);
+  display:flex;align-items:center;justify-content:center;font-size:1.9rem;
+  animation:pop .5s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes pop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+.suc-title{font-family:var(--ffd);font-size:clamp(1.5rem,4.5vw,2rem);
+  font-weight:600;color:var(--green);margin-bottom:.45rem}
+.suc-sub{font-size:.86rem;color:var(--t3);line-height:1.8;margin-bottom:1.6rem}
+.suc-list{display:flex;flex-direction:column;gap:.5rem;text-align:left;margin-bottom:1.6rem}
+.sl{display:flex;align-items:flex-start;gap:.68rem;padding:.62rem .82rem;
+  background:var(--bg3);border:1px solid var(--bdr);border-radius:3px;
+  font-size:.8rem;color:var(--t3)}
+.sl-ic{font-size:.9rem;flex-shrink:0;margin-top:.05rem}
+.sl strong{color:#fff;display:block;font-size:.78rem;margin-bottom:.08rem}
+
+/* ── LOADING ── */
+.ld{position:fixed;inset:0;z-index:500;background:rgba(6,6,8,.88);
+  backdrop-filter:blur(6px);display:none;align-items:center;
+  justify-content:center;flex-direction:column;gap:.85rem}
+.ld.open{display:flex}
+.ld-ring{width:44px;height:44px;border-radius:50%;
+  border:2px solid rgba(200,168,75,.15);border-top-color:var(--gold);
+  animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ld-msg{font-family:var(--ffm);font-size:.65rem;color:var(--t3);
+  letter-spacing:.09em;text-transform:uppercase}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:1.4rem;left:50%;
+  transform:translateX(-50%) translateY(70px);z-index:600;
+  background:var(--bg3);border:1px solid var(--bdr2);border-radius:40px;
+  padding:.58rem 1.15rem;font-size:.78rem;color:#fff;white-space:nowrap;
+  transition:transform .32s cubic-bezier(.34,1.2,.64,1);pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.err{border-color:rgba(208,69,69,.4);background:rgba(208,69,69,.1)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:480px){
+  .stage{padding:4.5rem 1.35rem 5rem}
+  .nav{bottom:1.3rem;right:1.35rem}
+  .cta{padding:.74rem 1.4rem;font-size:.8rem}
+  .chip-b{padding:.52rem .82rem}
+}
+@media(max-height:580px){
+  .quote{display:none}
+  .stage{padding:4rem var(--pad) 4rem}
+}
+
+/* shake */
+@keyframes shake{0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-9px)}40%{transform:translateX(9px)}
+  60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+</style>
+</head>
+<body>
+
+<div class="prog"><div class="prog-fill" id="prog"></div></div>
+<div class="prog-label" id="progLabel"><div class="prog-dot"></div><span id="progLabelTxt"></span></div>
+
+<div class="top">
+  <a class="top-logo" href="/">Startup Kundali</a>
+  <span class="top-time" id="topTime">~10 min to go</span>
+</div>
+
+<div class="stage" id="stage"></div>
+
+<div class="nav">
+  <button class="arr" id="arrBack" onclick="go(-1)" disabled title="Back">↑</button>
+  <button class="arr" id="arrFwd"  onclick="go(1)"  title="Next">↓</button>
+</div>
+
+<!-- PAYMENT SCREEN -->
+<div class="pay-screen" id="payScreen">
+  <div class="pay-inner">
+    <button class="pay-back" onclick="closePay()">← Edit answers</button>
+    <div class="pay-title">Almost there,<br><em id="payFirstName">founder.</em></div>
+    <div class="pay-sub">Your answers are saved. Pay to unlock your 34-page Startup Kundali — delivered within 24 hours.</div>
+    <div class="pay-sum" id="paySummary"></div>
+    <div class="pay-price">
+      <div class="pp-label">Startup Kundali Report<span class="pp-was">₹2,999 regular price</span></div>
+      <div class="pp-val">₹1,499</div>
+    </div>
+    <div class="pay-guar">
+      <span class="pay-guar-icon">🛡️</span>
+      <div>100% money back if your report is not in your inbox within 24 hours of payment. No questions asked.</div>
+    </div>
+    <button class="pay-btn" id="payBtn" onclick="pay()">Pay ₹1,499 &amp; Unlock My Kundali →</button>
+    <div class="pay-secure">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Secured by Cashfree · SSL · PCI-DSS Compliant
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS SCREEN -->
+<div class="suc-screen" id="sucScreen">
+  <div class="suc-inner">
+    <div class="suc-orb">🎯</div>
+    <div class="suc-title">Your Kundali is in motion.</div>
+    <div class="suc-sub">Payment confirmed. Your analyst team has been briefed. Your 34-page report will be in your inbox within 24 hours.</div>
+    <div class="suc-list">
+      <div class="sl"><span class="sl-ic">✅</span><div><strong>Payment confirmed</strong>Receipt sent to <span id="sucEmail" style="color:var(--gold)"></span><br><span style="font-family:var(--ffm);font-size:.62rem;color:var(--t2)">Order: <span id="sucOrderId"></span></span></div></div>
+      <div class="sl"><span class="sl-ic">✍️</span><div><strong>Analysis underway</strong>AI + analyst team building your 34-page report</div></div>
+      <div class="sl"><span class="sl-ic">💬</span><div><strong>WhatsApp alert</strong>We'll ping <span id="sucWA" style="color:var(--gold)"></span> when ready</div></div>
+      <div class="sl"><span class="sl-ic">🛡️</span><div><strong>100% guarantee</strong>Report in 24 hrs or full refund — no questions</div></div>
+    </div>
+    <a href="/" style="color:var(--t2);font-size:.78rem;text-decoration:none;
+      border:1px solid var(--bdr);padding:.5rem 1.1rem;border-radius:2px;
+      display:inline-block;transition:color .2s"
+      onmouseover="this.style.color='#C8A84B'" onmouseout="this.style.color=''">
+      ← Back to Home
+    </a>
+  </div>
+</div>
+
+<!-- LOADING -->
+<div class="ld" id="ld"><div class="ld-ring"></div><div class="ld-msg" id="ldMsg">Saving...</div></div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ════════════════════════════════════════════════════════════════
+   CONFIG — replace with your real values before deploying
+════════════════════════════════════════════════════════════════ */
+const CFG = {
+  SUPABASE_URL:      'https://YOUR_PROJECT.supabase.co',
+  SUPABASE_ANON_KEY: 'YOUR_ANON_KEY',
+  CREATE_ORDER_URL:  'https://YOUR_PROJECT.supabase.co/functions/v1/create-order',
+  APPS_SCRIPT_URL:   'YOUR_APPS_SCRIPT_URL',
+  CASHFREE_ENV:      'production',   // 'sandbox' for testing
+};
+
+/* ════════════════════════════════════════════════════════════════
+   SUPABASE
+════════════════════════════════════════════════════════════════ */
+const { createClient } = window.supabase;
+const db = createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY);
+
+/* ════════════════════════════════════════════════════════════════
+   PERSISTENCE — saves to localStorage on every answer
+   Key: sk_onboarding_state
+════════════════════════════════════════════════════════════════ */
+const CACHE_KEY = 'sk_onboarding_state';
+
+function saveCache() {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify({
+      idx:          S.idx,
+      answers:      S.answers,
+      submissionId: S.submissionId,   // ← persist so it survives tab close / CF redirect
+      savedAt:      Date.now(),
+    }));
+  } catch(e) { /* localStorage unavailable — ignore */ }
+}
+
+function loadCache() {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if (!raw) return false;
+    const cached = JSON.parse(raw);
+    // Expire after 24 hours
+    if (Date.now() - cached.savedAt > 86400000) { clearCache(); return false; }
+    S.answers      = cached.answers      || {};
+    S.idx          = cached.idx          || 0;
+    S.submissionId = cached.submissionId || null;  // ← restore submissionId
+    return true;
+  } catch(e) { return false; }
+}
+
+function clearCache() {
+  try { localStorage.removeItem(CACHE_KEY); } catch(e) {}
+}
+
+// Warn before accidental close (only after first answer)
+window.addEventListener('beforeunload', e => {
+  if (Object.keys(S.answers).length > 0 && !S.submissionId) {
+    e.preventDefault();
+    e.returnValue = '';
+  }
+});
+
+// Also save on visibility change (tab switch, home button on mobile)
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') saveCache();
+});
+
+/* ════════════════════════════════════════════════════════════════
+   DROP ANALYTICS — trackEvent()
+   Fires fire-and-forget events to Supabase question_events table.
+   Tracks every question view, every answer, and payment funnel.
+   Errors are swallowed — tracking never breaks the form.
+   
+   Funnel you'll see in Supabase:
+   Q1 viewed → Q3 viewed → Q8 viewed → payment_screen → payment_initiated → PAID
+   Drop-off between any two steps = conversion problem at that question.
+════════════════════════════════════════════════════════════════ */
+function trackEvent(event, meta) {
+  // Build plain-object row synchronously — no references to Response or Headers
+  const row = {
+    session_id:    S.sessionId,
+    submission_id: S.submissionId || null,
+    event:         String(event),
+    question_idx:  S.idx,
+    question_id:   (S.idx < QS.length ? QS[S.idx]?.id : null) || null,
+    meta:          meta ? JSON.stringify(meta) : null,
+  };
+  // setTimeout pushes the network call off the current call stack entirely,
+  // which avoids the DataCloneError that occurs when the Supabase client's
+  // internal Response/Headers object is touched during a postMessage cycle.
+  setTimeout(function() {
+    db.from('question_events').insert(row).then(
+      function(res) {
+        // Extract only the plain message string — never touch res.error directly
+        // as it may hold a non-cloneable Headers reference
+        if (res && res.error) {
+          var msg = (res.error.message || res.error.code || 'track error');
+          console.warn('[track]', String(msg));
+        }
+      },
+      function() { /* network failure — swallow */ }
+    );
+  }, 0);
+}
+
+const S = {
+  idx:           0,
+  answers:       {},
+  submissionId:  null,
+  animating:     false,
+  shCount:       0,
+  // Stable random session ID — identifies this browser session for funnel analytics
+  sessionId:     (function() {
+    try {
+      let sid = sessionStorage.getItem('sk_session');
+      if (!sid) { sid = 'ss_' + Math.random().toString(36).slice(2) + Date.now(); sessionStorage.setItem('sk_session', sid); }
+      return sid;
+    } catch(e) { return 'ss_' + Math.random().toString(36).slice(2); }
+  })(),
+};
+
+/* ════════════════════════════════════════════════════════════════
+   QUESTIONS
+   Types: text | email | tel | textarea | chips | shareholders
+   Special: condFields — array of sub-fields shown when
+            a specific chip value is selected
+════════════════════════════════════════════════════════════════ */
+const QS = [
+
+/* 01 — Name */
+{
+  id:'name', type:'text', required:true,
+  q:'Hi! What\'s your <em>name?</em>',
+  ph:'Your full name',
+  val: v => v.length >= 2 || 'Please enter your full name',
+  quote:{
+    t:'"The most successful founders I know have a clarity of vision that is almost unreasonable."',
+    s:'— Sam Altman, former President of Y Combinator'
+  }
+},
+
+/* 02 — Startup name */
+{
+  id:'startup_name', type:'text', required:true,
+  q:'What\'s your <em>startup called?</em>',
+  ph:'e.g. Zepto, Groww, Razorpay, Nua, Zetwerk',
+  val: v => v.length >= 1 || 'Please enter your startup name',
+  quote:{
+    t:'"A great name is one of the few things that can work for you endlessly — it shows up on every email, every deck, every search."',
+    s:'— Paul Graham, Y Combinator (paulgraham.com/name.html)'
+  }
+},
+
+/* 03 — Email */
+{
+  id:'email', type:'email', required:true,
+  q:'Where do we <em>deliver your Kundali?</em>',
+  sub:'Your 34-page report lands here within 24 hours.',
+  ph:'you@yourstartup.com',
+  val: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || 'Please enter a valid email',
+  quote:{
+    t:'"Move fast. Every week you don\'t have product-market fit is a week you\'re burning cash and losing momentum."',
+    s:'— Michael Seibel, CEO of Y Combinator (michaelseibel.com)'
+  }
+},
+
+/* 04 — WhatsApp */
+{
+  id:'whatsapp', type:'tel', required:true,
+  q:'Your <em>WhatsApp</em> — we\'ll ping you when the report is ready.',
+  ph:'98765 43210',
+  prefix:'+91 ',
+  val: v => v.replace(/\D/g,'').length >= 10 || 'Enter a valid 10-digit number',
+  quote:{
+    t:'"India will produce the largest number of startups in the world. The next Google or Facebook could come from a Tier-2 Indian city."',
+    s:'— Nandan Nilekani, Co-founder Infosys, architect of Aadhaar (NASSCOM India Leadership Forum 2023)'
+  }
+},
+
+/* 05 — City */
+{
+  id:'city', type:'text', required:true,
+  q:'Which <em>city</em> are you based in?',
+  ph:'e.g. Pune, Indore, Surat, Jaipur, Coimbatore',
+  val: v => v.length >= 2 || 'Please enter your city',
+  quote:{
+    t:'"Geography is destiny for early-stage startups. Where you build determines which customers, partners, and government programmes you can access."',
+    s:'— Vani Kola, Founder & MD of Kalaari Capital (Forbes India interview, 2022)'
+  }
+},
+
+/* 06 — State */
+{
+  id:'state', type:'chips', required:true,
+  q:'Which <em>state?</em>',
+  opts:[
+    {v:'andhra_pradesh',l:'Andhra Pradesh',e:'🔵'},
+    {v:'arunachal_pradesh',l:'Arunachal Pradesh',e:'🟢'},
+    {v:'assam',l:'Assam',e:'🟡'},
+    {v:'bihar',l:'Bihar',e:'🟠'},
+    {v:'chhattisgarh',l:'Chhattisgarh',e:'🔴'},
+    {v:'goa',l:'Goa',e:'🌊'},
+    {v:'gujarat',l:'Gujarat',e:'🟣'},
+    {v:'haryana',l:'Haryana',e:'🌾'},
+    {v:'himachal_pradesh',l:'Himachal Pradesh',e:'🏔️'},
+    {v:'jharkhand',l:'Jharkhand',e:'🌿'},
+    {v:'karnataka',l:'Karnataka',e:'🟢'},
+    {v:'kerala',l:'Kerala',e:'🌴'},
+    {v:'madhya_pradesh',l:'Madhya Pradesh',e:'🟠'},
+    {v:'maharashtra',l:'Maharashtra',e:'🔶'},
+    {v:'manipur',l:'Manipur',e:'🟤'},
+    {v:'meghalaya',l:'Meghalaya',e:'⛅'},
+    {v:'mizoram',l:'Mizoram',e:'🟦'},
+    {v:'nagaland',l:'Nagaland',e:'🏞️'},
+    {v:'odisha',l:'Odisha',e:'🔵'},
+    {v:'punjab',l:'Punjab',e:'🌾'},
+    {v:'rajasthan',l:'Rajasthan',e:'🏜️'},
+    {v:'sikkim',l:'Sikkim',e:'🏔️'},
+    {v:'tamil_nadu',l:'Tamil Nadu',e:'🔴'},
+    {v:'telangana',l:'Telangana',e:'🟡'},
+    {v:'tripura',l:'Tripura',e:'🌿'},
+    {v:'uttar_pradesh',l:'Uttar Pradesh',e:'⚪'},
+    {v:'uttarakhand',l:'Uttarakhand',e:'🏔️'},
+    {v:'west_bengal',l:'West Bengal',e:'🔵'},
+    {v:'delhi',l:'Delhi (NCT)',e:'🏛️'},
+    {v:'chandigarh',l:'Chandigarh',e:'🌳'},
+    {v:'jammu_kashmir',l:'J&K',e:'❄️'},
+    {v:'ladakh',l:'Ladakh',e:'🏔️'},
+    {v:'puducherry',l:'Puducherry',e:'🌺'},
+    {v:'andaman_nicobar',l:'Andaman & Nicobar',e:'🏝️'},
+    {v:'lakshadweep',l:'Lakshadweep',e:'🌊'},
+    {v:'dadra_nagar_haveli',l:'Dadra & NH / DD',e:'🔹'},
+  ],
+  quote:{
+    t:'"India has over 2,000 government schemes for businesses and startups — central and state combined. Less than 5% of eligible companies apply."',
+    s:'— KPMG India: MSME & Startup Scheme Awareness Report, 2023'
+  }
+},
+
+/* 07 — Problem statement */
+{
+  id:'problem_statement', type:'textarea', required:true,
+  q:'What <em>problem</em> does your startup solve?',
+  sub:'Be specific — who faces it, how often, what does it cost them today.',
+  ph:'e.g. Small kirana stores in Tier-2 cities spend 4+ hours a week managing inventory manually and consistently overstock or run out. No affordable digital solution exists for sub-₹5L GMV stores.',
+  max:280,
+  val: v => v.length >= 30 || 'Please describe the problem specifically',
+  quote:{
+    t:'"It\'s not the customer\'s job to know what they want."',
+    s:'— Steve Jobs (BusinessWeek interview, 1998 — widely cited in startup literature)'
+  }
+},
+
+/* 07b — Why you */
+{
+  id:'why_you', type:'textarea', required:true,
+  q:'Why are <em>you</em> the right person to solve this?',
+  sub:'Domain expertise, lived experience, unfair access, or network advantage.',
+  ph:'e.g. I spent 5 years in retail operations at Reliance Retail — I have seen this exact problem at scale. I know the buyers, the supply chain, and where the margin leaks happen.',
+  max:280,
+  val: v => v.length >= 20 || 'Tell us your unfair advantage',
+  quote:{
+    t:'"We look for founders who have an almost irrational commitment to solving a problem — usually because they have lived it."',
+    s:'— Sequoia India, partnership blog (sequoiacap.com/india, 2022)'
+  }
+},
+
+/* 07c — One-line pitch (in report, not shown in review) */
+{
+  id:'pitch', type:'textarea', required:true,
+  q:'Describe your startup in <em>one sentence.</em>',
+  sub:'What you do, who you do it for, and how.',
+  ph:'e.g. Nua is a period care brand built for Indian women — subscription-based, doctor-formulated, delivered to your door in 2 days.',
+  max:220,
+  val: v => v.length >= 20 || 'Give us at least one clear sentence',
+  quote:{
+    t:'"If I had more time, I would have written a shorter letter."',
+    s:'— Blaise Pascal, Lettres Provinciales (1657) — the original brevity principle, cited in every writing course'
+  }
+},
+
+/* 08 — Sector *//* 08 — Sector */
+{
+  id:'sector', type:'chips', required:true,
+  q:'What <em>sector</em> are you in?',
+  opts:[
+    {v:'agritech',l:'AgriTech',e:'🌾'},
+    {v:'healthtech',l:'HealthTech',e:'🏥'},
+    {v:'edtech',l:'EdTech',e:'📚'},
+    {v:'fintech',l:'FinTech',e:'💳'},
+    {v:'saas',l:'SaaS / B2B',e:'💻'},
+    {v:'d2c',l:'D2C / Consumer',e:'🛍️'},
+    {v:'cleantech',l:'CleanTech',e:'♻️'},
+    {v:'logistics',l:'Logistics',e:'🚚'},
+    {v:'contech',l:'ConTech',e:'🏗️'},
+    {v:'ai_ml',l:'AI / ML',e:'🤖'},
+    {v:'marketplace',l:'Marketplace',e:'🏪'},
+    {v:'deeptech',l:'Deep Tech',e:'🔬'},
+    {v:'other_sector',l:'Other',e:'💡'},
+  ],
+  otherField:{ id:'sector_other', ph:'Type your sector...' },
+  quote:{
+    t:'"India\'s startup ecosystem has grown from 471 startups in 2016 to over 1.17 lakh DPIIT-recognised startups by 2024 — cutting across every sector."',
+    s:'— DPIIT Startup India Dashboard, January 2025 (startupindia.gov.in)'
+  }
+},
+
+/* 09 — Business model */
+{
+  id:'biz_model', type:'chips', required:true,
+  q:'What\'s your <em>business model?</em>',
+  sub:'Select all that apply.',
+  multi:true,
+  opts:[
+    {v:'b2b',l:'B2B',e:'🤝'},
+    {v:'b2c',l:'B2C',e:'👥'},
+    {v:'b2b2c',l:'B2B2C',e:'🔗'},
+    {v:'saas_model',l:'SaaS',e:'☁️'},
+    {v:'marketplace_model',l:'Marketplace',e:'🏪'},
+    {v:'ai_platform',l:'AI Platform',e:'🤖'},
+    {v:'d2c_model',l:'D2C',e:'📦'},
+    {v:'subscription',l:'Subscription',e:'🔄'},
+    {v:'commission',l:'Commission',e:'💰'},
+    {v:'hardware',l:'Hardware',e:'🔧'},
+    {v:'hybrid',l:'Hybrid',e:'⚡'},
+  ],
+  quote:{
+    t:'"Ideas are easy. Implementation is hard. But business model is hardest — because it determines whether great implementation ever returns value."',
+    s:'— Guy Kawasaki, former Chief Evangelist at Apple (Art of the Start, 2015)'
+  }
+},
+
+/* 10 — Stage */
+{
+  id:'stage', type:'chips', required:true,
+  q:'What <em>stage</em> are you at?',
+  opts:[
+    {v:'idea',l:'Idea only',e:'💭'},
+    {v:'mvp',l:'MVP / Prototype',e:'🛠️'},
+    {v:'pre_rev',l:'Product live, no revenue',e:'🚀'},
+    {v:'early_rev',l:'Early revenue (< ₹10L/mo)',e:'📈'},
+    {v:'growing',l:'Growing (₹10L–₹1Cr/mo)',e:'🔥'},
+    {v:'scaling',l:'Scaling (₹1Cr+/mo)',e:'⚡'},
+  ],
+  quote:{
+    t:'"The Startup India Seed Fund Scheme provides financial assistance of up to ₹20 lakh for proof of concept and up to ₹50 lakh as loans for prototype development and market entry."',
+    s:'— DPIIT SISFS Scheme Guidelines, 2021 (startupindia.gov.in/content/sdf/sisfs/SISFS_Scheme_Guidelines.pdf)'
+  }
+},
+
+/* 11 — Revenue */
+{
+  id:'revenue', type:'chips', required:true,
+  q:'Current <em>monthly revenue?</em>',
+  sub:'Accurate numbers calibrate your investor readiness score.',
+  opts:[
+    {v:'zero',l:'₹0 (pre-revenue)',e:'🌱'},
+    {v:'under_50k',l:'Up to ₹50K',e:'📊'},
+    {v:'50k_2l',l:'₹50K – ₹2L',e:'📈'},
+    {v:'2l_10l',l:'₹2L – ₹10L',e:'🔥'},
+    {v:'10l_50l',l:'₹10L – ₹50L',e:'⚡'},
+    {v:'above_50l',l:'₹50L+',e:'🚀'},
+    {v:'prefer_not',l:'Prefer not to say',e:'🔒'},
+  ],
+  quote:{
+    t:'"Don\'t scale prematurely. Most startups that fail do so because they start scaling before they have product-market fit."',
+    s:'— Eric Ries, The Lean Startup (Crown Business, 2011)'
+  }
+},
+
+/* 12 — ICP */
+{
+  id:'icp', type:'textarea', required:true,
+  q:'Who is your <em>ideal customer?</em>',
+  sub:'"Everyone" is not a customer. Be precise — age, role, city, pain point.',
+  ph:'e.g. Female professionals aged 22–35 in Tier-1 cities, earning ₹8L+, who currently buy imported period care from Amazon and are willing to pay a premium for Indian, doctor-backed alternatives.',
+  max:280,
+  val: v => v.length >= 30 || 'Please be specific — this drives your ICP analysis',
+  quote:{
+    t:'"If you make something that a small group of people really love, you\'ve done something remarkable. A large number of people who sort of like something is much less valuable."',
+    s:'— Paul Graham, Y Combinator (paulgraham.com/love.html)'
+  }
+},
+
+/* 13 — Competitor */
+{
+  id:'competitor', type:'textarea', required:false,
+  q:'Who is your <em>closest competitor</em> — or the behaviour you\'re replacing?',
+  sub:'Be honest and specific. This shapes your competitive moat analysis.',
+  ph:'e.g. Whisper and Stayfree (mass market, not premium). Nykaa carries imports like Carmesi but no subscription. The real competitor is Amazon — that\'s where our ICP currently buys.',
+  max:240,
+  quote:{
+    t:'"Competition is for losers. If you want to create and capture lasting value, look to build monopolies."',
+    s:'— Peter Thiel, Zero to One (Crown Business, 2014)'
+  }
+},
+
+/* 14 — IP status */
+{
+  id:'ip_status', type:'chips', required:true,
+  q:'What\'s your current <em>IP status?</em>',
+  opts:[
+    {v:'no_ip',l:'No IP filed yet',e:'💭'},
+    {v:'trademark',l:'Trademark filed',e:'™️'},
+    {v:'provisional',l:'Provisional patent',e:'📝'},
+    {v:'full_patent',l:'Full patent granted',e:'🏆'},
+    {v:'trade_secret',l:'Trade secret',e:'🔒'},
+    {v:'copyright',l:'Copyright registered',e:'©️'},
+  ],
+  quote:{
+    t:'"A provisional patent application costs ₹1,750 for startups in India and gives you 12 months of \'patent pending\' status. Filing it is one of the cheapest asymmetric bets a founder can make."',
+    s:'— IP India (ipindia.gov.in): Fee Schedule for Patent Applications, 2024'
+  }
+},
+
+/* 15 — Registration */
+{
+  id:'registered', type:'chips', required:true,
+  q:'Is your company <em>legally registered?</em>',
+  opts:[
+    {v:'pvt_ltd',l:'Pvt. Ltd.',e:'🏢'},
+    {v:'opc',l:'OPC',e:'👤'},
+    {v:'llp',l:'LLP',e:'🤝'},
+    {v:'partnership',l:'Partnership',e:'📋'},
+    {v:'proprietorship',l:'Proprietorship',e:'🏪'},
+    {v:'not_yet',l:'Not yet',e:'💡'},
+  ],
+  /* Conditional sub-sections shown inline based on value */
+  condFields:[
+    {
+      showWhen:['pvt_ltd','opc'],
+      fields:[
+        {
+          id:'dpiit_status', type:'chips',
+          label:'DPIIT Startup India Recognition',
+          sub:'This single registration unlocks ₹20L+ in tax benefits, fast-track IPR, and scheme access.',
+          opts:[
+            {v:'yes',l:'Yes, recognised ✓'},
+            {v:'applied',l:'Applied, pending'},
+            {v:'no',l:'Not applied yet'},
+            {v:'unsure',l:"Don't know what this is"},
+          ]
+        },
+        {
+          id:'shareholders', type:'shareholders',
+          label:'Shareholders',
+          sub:'Add each shareholder. Caste is asked only to match SC/ST and diversity govt schemes — you can skip this.',
+        }
+      ]
+    },
+    {
+      showWhen:['llp','partnership'],
+      fields:[
+        {
+          id:'shareholders', type:'shareholders',
+          label:'Partners',
+          sub:'Add each partner. Caste is asked only to match SC/ST and women-led scheme eligibility — you can skip this.',
+        }
+      ]
+    },
+    {
+      showWhen:['not_yet'],
+      fields:[
+        {
+          id:'incorporation_plan', type:'chips',
+          label:'Are you planning to register?',
+          opts:[
+            {v:'pvt_plan',l:'Planning Pvt. Ltd.'},
+            {v:'llp_plan',l:'Planning LLP'},
+            {v:'unsure_reg',l:'Not sure yet'},
+            {v:'no_plan',l:'No plans to register'},
+          ]
+        }
+      ]
+    }
+  ],
+  quote:{
+    t:'"DPIIT recognition gives startups access to self-certification under 6 labour laws, 3 environmental laws, exemption from Angel Tax, and fast-track patent examination — all free of cost."',
+    s:'— DPIIT: Benefits for DPIIT-Recognised Startups (startupindia.gov.in/content/sdf/recognitionBenefits.pdf)'
+  }
+},
+
+/* 16 — 3-month priorities */
+{
+  id:'priorities_3m', type:'chips', required:true,
+  q:'What are your <em>top priorities</em> in the next 3 months?',
+  sub:'Select up to 3.',
+  multi:true,
+  max_select:3,
+  opts:[
+    {v:'fundraise',l:'Raise funding',e:'💰'},
+    {v:'first_revenue',l:'First revenue',e:'💳'},
+    {v:'grow_revenue',l:'Grow revenue',e:'📈'},
+    {v:'build_team',l:'Build the team',e:'👥'},
+    {v:'launch_product',l:'Launch / ship product',e:'🚀'},
+    {v:'pmf',l:'Find PMF',e:'🎯'},
+    {v:'expand_city',l:'Expand to new city',e:'🗺️'},
+    {v:'govt_grants',l:'Apply for grants',e:'🏛️'},
+    {v:'ip_filing',l:'File patents / IP',e:'📝'},
+    {v:'bd_partnerships',l:'B2B partnerships',e:'🤝'},
+    {v:'profitability',l:'Reach profitability',e:'✅'},
+  ],
+  quote:{
+    t:'"A goal is not always meant to be reached; it often serves simply as something to aim at."',
+    s:'— Bruce Lee (quoted in Shannon Lee, Be Water My Friend, 2020)'
+  }
+},
+
+/* 17 — Analyst focus */
+{
+  id:'analyst_focus', type:'textarea', required:false,
+  q:'What should our analyst <em>focus on</em> most in your report?',
+  sub:'Any specific challenge, blind spot, or area you need the sharpest insight on.',
+  ph:'e.g. I am raising a pre-seed round in 60 days and need to know exactly what gaps will get flagged. Or: I have applied for 3 grants and been rejected each time — I want to know why.',
+  max:320,
+  quote:{
+    t:'"The single most important thing you can do as a founder is to be honest about where you are. Investors can handle bad news. They cannot handle surprises."',
+    s:'— Vinod Khosla, Founder of Khosla Ventures (khoslaventures.com, Essays)'
+  }
+},
+
+/* 18 — Anything else */
+{
+  id:'extra', type:'textarea', required:false,
+  q:'Anything else that changes <em>the picture?</em>',
+  sub:'A recent win, a co-founder exit, a key customer, unusual context. This is your floor.',
+  ph:'e.g. We have 2 signed LOIs from enterprise clients but no revenue yet. Or: our CTO is a 4th-year student and joins full-time in June. Or: we pivoted 3 months ago from B2C to B2B.',
+  max:400,
+  quote:{
+    t:'"The way to get good ideas is to get lots of ideas and throw the bad ones away."',
+    s:'— Linus Pauling (Nobel Prize winner; widely cited in ideation and innovation research)'
+  }
+},
+
+]; /* end QS */
+
+const TOTAL = QS.length;
+
+/* ════════════════════════════════════════════════════════════════
+   SHAREHOLDER MANAGER
+════════════════════════════════════════════════════════════════ */
+function buildSHCard(idx, isPartner, fieldId) {
+  const label = isPartner ? `Partner ${idx}` : `Shareholder ${idx}`;
+  return `
+  <div class="sh-card" data-sh="${idx}" data-field="${fieldId}">
+    <div class="sh-hdr">
+      <span class="sh-lbl">${label}</span>
+      ${idx > 1 ? `<button class="sh-rm" onclick="removeSH(this)">✕ Remove</button>` : ''}
+    </div>
+    <div class="sh-body">
+      <div class="sh-row">
+        <div class="sh-field">
+          <label>Full Name</label>
+          <input class="sh-inp" type="text" placeholder="e.g. Priya Sharma" data-shf="name"/>
+        </div>
+        <div class="sh-field">
+          <label>${isPartner ? 'Profit Share %' : 'Equity %'}</label>
+          <input class="sh-inp" type="number" placeholder="e.g. 60" min="0" max="100" data-shf="percent"/>
+        </div>
+      </div>
+      <div class="sh-row">
+        <div class="sh-field">
+          <label>Role / Designation</label>
+          <input class="sh-inp" type="text" placeholder="e.g. CEO / Co-founder" data-shf="role"/>
+        </div>
+        <div class="sh-field">
+          <label>Highest Education</label>
+          <input class="sh-inp" type="text" placeholder="e.g. B.Tech VJTI, MBA IIM-A" data-shf="education"/>
+        </div>
+      </div>
+      <div class="sh-field">
+        <label>Caste Category</label>
+        <select class="sh-sel" data-shf="caste">
+          <option value="">Select...</option>
+          <option value="general">General</option>
+          <option value="obc">OBC</option>
+          <option value="sc">SC</option>
+          <option value="st">ST</option>
+          <option value="ews">EWS</option>
+          <option value="women">Women founder</option>
+          <option value="prefer_not">Prefer not to say</option>
+        </select>
+        <div class="sh-caste-note">ℹ️ Asked <strong>only</strong> to match SC/ST, OBC &amp; women-led govt schemes — worth ₹10L–₹50L. Completely optional.</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function addSH(wrapId, fieldId, isPartner) {
+  const wrap = document.getElementById(wrapId);
+  if (!wrap) return;
+  const existing = wrap.querySelectorAll('.sh-card').length;
+  S.shCount++;
+  const div = document.createElement('div');
+  div.innerHTML = buildSHCard(existing + 1, isPartner, fieldId);
+  wrap.appendChild(div.firstElementChild);
+}
+
+function removeSH(btn) {
+  const card = btn.closest('.sh-card');
+  const wrap = card.closest('.sh-wrap');
+  if (wrap.querySelectorAll('.sh-card').length <= 1) {
+    showToast('At least one shareholder is required.', true);
+    return;
+  }
+  card.remove();
+  // Re-number
+  wrap.querySelectorAll('.sh-lbl').forEach((l, i) => {
+    l.textContent = l.textContent.replace(/\d+/, i + 1);
+  });
+}
+
+function collectSH(fieldId) {
+  const cards = document.querySelectorAll(`.sh-card[data-field="${fieldId}"]`);
+  return Array.from(cards).map(c => ({
+    name:      c.querySelector('[data-shf="name"]')?.value.trim() || '',
+    percent:   c.querySelector('[data-shf="percent"]')?.value.trim() || '',
+    role:      c.querySelector('[data-shf="role"]')?.value.trim() || '',
+    education: c.querySelector('[data-shf="education"]')?.value.trim() || '',
+    caste:     c.querySelector('[data-shf="caste"]')?.value || '',
+  }));
+}
+
+/* ════════════════════════════════════════════════════════════════
+   RENDER
+════════════════════════════════════════════════════════════════ */
+function render(idx, dir) {
+  const q = QS[idx];
+  const stage = document.getElementById('stage');
+
+  // Exit current card — disable interaction, animate out, then remove
+  const old = stage.querySelector('.qcard');
+  if (old) {
+    old.style.pointerEvents = 'none';
+    old.style.position = 'absolute';
+    old.style.top = '50%';
+    old.style.transform = 'translateY(-50%)';
+    old.style.width = '100%';
+    old.style.maxWidth = '620px';
+    old.classList.add(dir > 0 ? 'x-left' : 'x-right');
+    setTimeout(() => { if (old.parentNode) old.remove(); }, 380);
+    // Scroll stage back to top for new card
+    stage.scrollTop = 0;
+  }
+
+  // Build new card
+  const card = document.createElement('div');
+  card.className = 'qcard ' + (dir > 0 ? 'e-right' : 'e-left');
+  card.innerHTML = buildQ(q);
+  stage.appendChild(card);
+
+  // Progress bar
+  const pct = Math.round((idx / TOTAL) * 100);
+  document.getElementById('prog').style.width = pct + '%';
+
+  // Time + motivation text
+  const timeTexts = [
+    '~10 min to go', '~9 min to go', '~9 min to go', '~8 min to go',
+    '~8 min to go', '~7 min to go', '~7 min to go', '~6 min to go',
+    '~6 min to go', '~5 min to go', '~5 min to go', '~4 min to go',
+    '~4 min to go', '~3 min to go', '~3 min to go', '~2 min to go',
+    '~2 min to go', '~1 min to go', '~1 min to go', 'Almost there!',
+    'Last one!',
+  ];
+  document.getElementById('topTime').textContent = timeTexts[Math.min(idx, timeTexts.length - 1)];
+
+  // Milestone label (shows briefly at 25 / 50 / 75 / 100%)
+  const milestones = {
+    25: '25% done — great start!',
+    50: 'Halfway there 🔥',
+    75: '75% done — almost!',
+    99: 'Last question!',
+  };
+  const lbl = document.getElementById('progLabel');
+  const lblTxt = document.getElementById('progLabelTxt');
+  let milestone = null;
+  for (const [p, text] of Object.entries(milestones)) {
+    if (pct >= parseInt(p) && pct < parseInt(p) + Math.ceil(100/TOTAL) + 2) {
+      milestone = text; break;
+    }
+  }
+  if (milestone && idx > 0) {
+    lblTxt.textContent = milestone;
+    lbl.classList.add('show');
+    setTimeout(() => lbl.classList.remove('show'), 2800);
+  } else {
+    lbl.classList.remove('show');
+  }
+
+  // Nav arrows
+  document.getElementById('arrBack').disabled = idx === 0;
+
+  // Track question view (fire-and-forget — never blocks render)
+  trackEvent('question_viewed', { question_id: q.id, question_idx: idx });
+
+  // Restore saved answers
+  restoreAnswers(card, q);
+
+  // Focus
+  setTimeout(() => {
+    if (window.innerWidth > 480) {
+      const inp = card.querySelector('.q-inp, .q-ta');
+      if (inp) inp.focus();
+    }
+  }, 450);
+
+  // Wire events
+  wireQ(card, q);
+}
+
+function buildQ(q) {
+  const qText = `<div class="q-text">${q.q}</div>`;
+  const qSub  = q.sub ? `<div class="q-sub">${q.sub}</div>` : '';
+
+  let inputHtml = '';
+
+  if (q.type === 'textarea') {
+    inputHtml = `
+      <textarea class="q-ta" id="qi_${q.id}" placeholder="${q.ph||''}"
+        maxlength="${q.max||500}" oninput="onTA(this,'${q.id}')"
+      ></textarea>
+      ${q.max ? `<div class="cc" id="cc_${q.id}">0 / ${q.max}</div>` : ''}`;
+  }
+  else if (q.type === 'chips') {
+    const isMulti = q.multi;
+    const chips = q.opts.map(o => `
+      <label class="chip${isMulti?' multi':''}">
+        <input type="${isMulti?'checkbox':'radio'}" name="${q.id}" value="${o.v}"
+          onchange="onChip(this,'${q.id}')"/>
+        <div class="chip-b">${o.e?`<span class="chip-e">${o.e}</span>`:''}${o.l}</div>
+      </label>`).join('');
+
+    // Other-sector reveal
+    const otherReveal = q.otherField ? `
+      <div class="other-reveal" id="other_${q.id}">
+        <input class="q-inp" type="text" id="qi_${q.otherField.id}"
+          placeholder="${q.otherField.ph||'Type here...'}"
+          oninput="S.answers['${q.otherField.id}']=this.value.trim();saveCache()"/>
+      </div>
+      <div class="other-cta" id="other_cta_${q.id}" style="display:none;margin-top:1.2rem">
+        <button class="cta" onclick="go(1)">Continue →</button>
+        <div class="cta-hint" style="margin-top:.5rem">or press <kbd>Enter ↵</kbd></div>
+      </div>` : '';
+
+    // Conditional fields
+    const condHtml = buildCondFields(q);
+
+    inputHtml = `<div class="chips">${chips}</div>${otherReveal}${condHtml}`;
+  }
+  else if (q.type === 'text' || q.type === 'email' || q.type === 'tel') {
+    const pfx = q.prefix ? `<span class="q-prefix">${q.prefix}</span>` : '';
+    inputHtml = `
+      <div class="q-inp-wrap">
+        ${pfx}
+        <input class="q-inp${q.prefix?' pfx':''}" type="${q.type}" id="qi_${q.id}"
+          placeholder="${q.ph||''}"
+          autocomplete="${q.type==='email'?'email':q.type==='tel'?'tel':'off'}"
+          oninput="S.answers['${q.id}']=this.value.trim()"
+        />
+      </div>`;
+  }
+
+  const quoteHtml = q.quote ? `
+    <div class="quote">
+      <div class="quote-t">${q.quote.t}</div>
+      <div class="quote-s">${q.quote.s}</div>
+    </div>` : '';
+
+  const isLast = idx_of(q) === TOTAL - 1;
+  const ctaHtml = (q.type !== 'chips' || q.multi) ? `
+    <div class="cta-row">
+      <button class="cta" onclick="go(1)">${isLast ? 'Review & Pay →' : 'Continue'}</button>
+      <span class="cta-hint">or press <kbd>Enter ↵</kbd></span>
+    </div>` : '';
+
+  return qText + qSub + inputHtml + quoteHtml + ctaHtml;
+}
+
+function buildCondFields(q) {
+  if (!q.condFields) return '';
+  let html = '';
+  q.condFields.forEach((cf, ci) => {
+    html += `<div class="cond" id="cond_${q.id}_${ci}"><div class="cond-inner">`;
+    html += `<button class="cond-back" onclick="resetCond('${q.id}')">← Change company type</button>`;
+    cf.fields.forEach(f => {
+      const flabel = `<div style="font-family:var(--ffm);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--t2);margin-bottom:.55rem">${f.label}</div>`;
+      const fsub   = f.sub ? `<div style="font-size:.76rem;color:var(--t3);line-height:1.65;margin-bottom:.65rem">${f.sub}</div>` : '';
+
+      if (f.type === 'chips') {
+        const chips = f.opts.map(o => `
+          <label class="chip">
+            <input type="radio" name="${f.id}" value="${o.v}" onchange="S.answers['${f.id}']=this.value"/>
+            <div class="chip-b">${o.l}</div>
+          </label>`).join('');
+        html += `<div>${flabel}${fsub}<div class="chips">${chips}</div></div>`;
+      }
+      else if (f.type === 'shareholders') {
+        const isPartner = ['llp','partnership'].includes(S.answers.registered);
+        const wrapId = `sh_wrap_${f.id}`;
+        html += `
+          <div>
+            ${flabel}${fsub}
+            <div class="sh-wrap" id="${wrapId}"></div>
+            <button class="add-sh" onclick="addSH('${wrapId}','${f.id}',${isPartner})">
+              + Add ${isPartner?'Partner':'Shareholder'}
+            </button>
+          </div>`;
+      }
+    });
+    html += `</div>
+      <button class="cta" style="margin-top:1.4rem" onclick="go(1)">Continue →</button>
+    </div>`;
+  });
+  return html;
+}
+
+function idx_of(q) { return QS.indexOf(q); }
+
+/* ════════════════════════════════════════════════════════════════
+   RESTORE ANSWERS
+════════════════════════════════════════════════════════════════ */
+function restoreAnswers(card, q) {
+  const saved = S.answers[q.id];
+  if (!saved) return;
+
+  if (q.type === 'chips') {
+    if (q.multi) {
+      const vals = Array.isArray(saved) ? saved : [saved];
+      vals.forEach(v => {
+        const cb = card.querySelector(`input[name="${q.id}"][value="${v}"]`);
+        if (cb) cb.checked = true;
+      });
+    } else {
+      const rb = card.querySelector(`input[name="${q.id}"][value="${saved}"]`);
+      if (rb) { rb.checked = true; triggerCond(card, q, saved); }
+    }
+    // Restore other-sector
+    if (q.otherField && S.answers[q.otherField.id]) {
+      const inp = card.querySelector(`#qi_${q.otherField.id}`);
+      if (inp) inp.value = S.answers[q.otherField.id];
+      if (saved === 'other_sector') {
+        document.getElementById(`other_${q.id}`)?.classList.add('show');
+        const ctaDiv = document.getElementById(`other_cta_${q.id}`);
+        if (ctaDiv) ctaDiv.style.display = 'block';
+      }
+    }
+    // Restore cond field answers
+    if (q.condFields) {
+      q.condFields.forEach(cf => {
+        cf.fields.forEach(f => {
+          const fSaved = S.answers[f.id];
+          if (fSaved && f.type === 'chips') {
+            const rb = card.querySelector(`input[name="${f.id}"][value="${fSaved}"]`);
+            if (rb) rb.checked = true;
+          }
+        });
+      });
+    }
+  }
+  else if (['text','email','tel'].includes(q.type)) {
+    const inp = document.getElementById(`qi_${q.id}`);
+    if (inp) inp.value = saved;
+  }
+  else if (q.type === 'textarea') {
+    const ta = document.getElementById(`qi_${q.id}`);
+    if (ta) { ta.value = saved; updateCC(ta, q.id); }
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   EVENT HANDLERS
+════════════════════════════════════════════════════════════════ */
+function wireQ(card, q) {
+  // Text input: Enter to advance
+  card.querySelectorAll('.q-inp').forEach(inp => {
+    inp.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); go(1); }
+    });
+  });
+  // Textarea: Enter advances (Shift+Enter for newline)
+  card.querySelectorAll('.q-ta').forEach(ta => {
+    ta.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); go(1); }
+    });
+  });
+}
+
+function onChip(el, qid) {
+  const q = QS.find(x => x.id === qid);
+  if (!q) return;
+
+  if (q.multi) {
+    // Multi-select — enforce max_select
+    if (q.max_select) {
+      const checked = document.querySelectorAll(`input[name="${qid}"]:checked`);
+      if (checked.length > q.max_select) {
+        el.checked = false;
+        showToast(`Select up to ${q.max_select} options`, true);
+        return;
+      }
+    }
+    S.answers[qid] = Array.from(document.querySelectorAll(`input[name="${qid}"]:checked`)).map(x => x.value);
+    return; // don't auto-advance for multi
+  }
+
+  const val = el.value;
+  S.answers[qid] = val;
+  saveCache();
+  if (q.otherField) {
+    const rev = document.getElementById(`other_${qid}`);
+    const ctaDiv = document.getElementById(`other_cta_${qid}`);
+    const isOther = val === 'other_sector';
+    if (rev) rev.classList.toggle('show', isOther);
+    if (ctaDiv) ctaDiv.style.display = isOther ? 'block' : 'none';
+    if (isOther) {
+      setTimeout(() => document.getElementById(`qi_${q.otherField.id}`)?.focus(), 350);
+      return; // don't auto-advance — let them type
+    }
+  }
+
+  // Conditional fields reveal
+  const card = el.closest('.qcard');
+  if (card) triggerCond(card, q, val);
+
+  // Auto-advance if no cond to show and not 'other'
+  const hasCond = q.condFields?.some(cf => cf.showWhen.includes(val));
+  if (!hasCond) {
+    setTimeout(() => go(1), 280);
+  }
+}
+
+function resetCond(qid) {
+  // 1. Uncheck all radio chips for this question in DOM
+  document.querySelectorAll(`input[name="${qid}"]`).forEach(r => { r.checked = false; });
+  // 2. Collapse all cond blocks for this question
+  document.querySelectorAll(`[id^="cond_${qid}_"]`).forEach(el => {
+    el.classList.remove('show');
+    // Reset max-height inline so transition works next time
+    el.style.maxHeight = '';
+  });
+  // 3. Clear saved answer so validation doesn't pass old value
+  delete S.answers[qid];
+  // 4. Also clear any sub-field answers that were inside cond blocks
+  const q = QS.find(x => x.id === qid);
+  if (q?.condFields) {
+    q.condFields.forEach(cf => cf.fields.forEach(f => { delete S.answers[f.id]; }));
+  }
+  saveCache();
+  // 5. Scroll cond area back into view so user can see chips
+  const chipsEl = document.querySelector(`input[name="${qid}"]`)?.closest('.chips');
+  if (chipsEl) chipsEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function triggerCond(card, q, val) {
+  if (!q.condFields) return;
+  q.condFields.forEach((cf, ci) => {
+    const condEl = card.querySelector(`#cond_${q.id}_${ci}`);
+    if (!condEl) return;
+    const show = cf.showWhen.includes(val);
+    condEl.classList.toggle('show', show);
+
+    // Auto-insert first shareholder if showing
+    if (show) {
+      cf.fields.forEach(f => {
+        if (f.type === 'shareholders') {
+          const wrapId = `sh_wrap_${f.id}`;
+          const wrap = document.getElementById(wrapId);
+          if (wrap && wrap.querySelectorAll('.sh-card').length === 0) {
+            const isPartner = ['llp','partnership'].includes(val);
+            addSH(wrapId, f.id, isPartner);
+          }
+        }
+      });
+    }
+  });
+}
+
+function onTA(el, id) {
+  S.answers[id] = el.value;
+  updateCC(el, id);
+  saveCache();
+}
+
+function updateCC(el, id) {
+  const cc = document.getElementById('cc_' + id);
+  if (cc) cc.textContent = `${el.value.length} / ${el.maxLength}`;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   NAVIGATION
+════════════════════════════════════════════════════════════════ */
+function go(dir) {
+  if (S.animating) return;
+
+  if (dir > 0) {
+    const err = validate(QS[S.idx]);
+    if (err) { showToast(err, true); shakeCard(); return; }
+    saveAnswer(QS[S.idx]);
+    // Track answer (only on forward navigation = deliberate answer)
+    if (dir > 0) trackEvent('question_answered', { question_id: QS[S.idx].id, question_idx: S.idx });
+  }
+
+  const next = S.idx + dir;
+
+  // Last question done → payment
+  if (dir > 0 && S.idx === TOTAL - 1) { saveAnswer(QS[S.idx]); openPay(); return; }
+
+  if (next < 0 || next >= TOTAL) return;
+
+  S.animating = true;
+  S.idx = next;
+  render(next, dir);
+  saveCache();
+  setTimeout(() => S.animating = false, 480);
+}
+
+function validate(q) {
+  if (!q.required) return null;
+  const v = getVal(q);
+  if (!v || (Array.isArray(v) && !v.length) || v === '') return 'This question is required';
+  if (q.val) {
+    const r = q.val(v);
+    if (r !== true) return r;
+  }
+  return null;
+}
+
+function getVal(q) {
+  if (q.type === 'chips') return S.answers[q.id] || '';
+  const el = document.getElementById(`qi_${q.id}`);
+  return el ? el.value.trim() : S.answers[q.id] || '';
+}
+
+function saveAnswer(q) {
+  if (q.type === 'chips') {
+    // Collect shareholder data from all cond fields
+    if (q.condFields) {
+      q.condFields.forEach(cf => {
+        cf.fields.forEach(f => {
+          if (f.type === 'shareholders') {
+            S.answers[f.id] = collectSH(f.id);
+          }
+        });
+      });
+    }
+    return;
+  }
+  const el = document.getElementById(`qi_${q.id}`);
+  if (el) S.answers[q.id] = el.value.trim();
+}
+
+function shakeCard() {
+  const c = document.querySelector('.qcard');
+  if (!c) return;
+  c.style.animation = 'none';
+  c.offsetHeight;
+  c.style.animation = 'shake .38s ease';
+}
+
+/* ════════════════════════════════════════════════════════════════
+   PAYMENT FLOW
+════════════════════════════════════════════════════════════════ */
+async function openPay() {
+  // Build summary display
+  const fields = [
+    ['Startup',       S.answers.startup_name],
+    ['Sector',        S.answers.sector_other || S.answers.sector],
+    ['Model',         Array.isArray(S.answers.biz_model) ? S.answers.biz_model.join(', ') : S.answers.biz_model],
+    ['Stage',         S.answers.stage],
+    ['Revenue',       S.answers.revenue],
+    ['City',          S.answers.city + (S.answers.state ? ', ' + S.answers.state.replace(/_/g,' ') : '')],
+    ['Problem',       S.answers.problem_statement],
+    ['Why us',        S.answers.why_you],
+    ['IP Status',     S.answers.ip_status],
+    ['Registered',    S.answers.registered],
+    ['Priorities',    Array.isArray(S.answers.priorities_3m) ? S.answers.priorities_3m.join(', ') : S.answers.priorities_3m],
+  ].filter(r => r[1]);
+
+  document.getElementById('paySummary').innerHTML = fields.map(([k,v]) => `
+    <div class="psr">
+      <span class="psr-k">${k}</span>
+      <span class="psr-v">${String(v).replace(/_/g,' ')}</span>
+    </div>`).join('');
+
+  const first = (S.answers.name || 'founder').split(' ')[0];
+  document.getElementById('payFirstName').textContent = first + '.';
+  document.getElementById('payScreen').classList.add('open');
+
+  // ── SAVE TO DB NOW ──────────────────────────────────────────
+  // Insert happens here — when the user sees the payment screen —
+  // NOT when they click Pay. This means even if they close the tab
+  // after seeing pricing, we have their full data as a hot lead.
+  // If a row already exists (e.g. user navigated back), skip insert.
+  if (S.submissionId) return; // already saved — don't double-insert
+
+  try {
+    const payload = {
+      name:               S.answers.name,
+      email:              S.answers.email,
+      whatsapp:           (S.answers.whatsapp || '').replace(/\D/g,''),
+      startup_name:       S.answers.startup_name,
+      city:               S.answers.city,
+      state:              S.answers.state,
+      pitch:              S.answers.pitch,
+      problem_statement:  S.answers.problem_statement,
+      why_you:            S.answers.why_you,
+      sector:             S.answers.sector_other || S.answers.sector,
+      biz_model:          JSON.stringify(S.answers.biz_model),
+      stage:              S.answers.stage,
+      revenue:            S.answers.revenue,
+      icp:                S.answers.icp,
+      competitor:         S.answers.competitor,
+      ip_status:          S.answers.ip_status,
+      registered:         S.answers.registered,
+      dpiit_status:       S.answers.dpiit_status,
+      shareholders:       JSON.stringify(S.answers.shareholders),
+      priorities_3m:      JSON.stringify(S.answers.priorities_3m),
+      analyst_focus:      S.answers.analyst_focus,
+      extra:              S.answers.extra,
+      incorporation_plan: S.answers.incorporation_plan,
+      payment_status:     'pending',                    // stays pending until webhook
+    };
+
+    const { data, error } = await db.from('submissions').insert(payload).select('id').single();
+    if (error) {
+      // Non-fatal — user can still attempt payment; we'll catch them on retry
+      console.error('[openPay] DB insert failed:', error.message);
+      return;
+    }
+    S.submissionId = data.id;
+    saveCache(); // persist immediately — survives tab close + CF redirect
+    trackEvent('payment_screen_reached', { submission_id: S.submissionId });
+  } catch (e) {
+    console.error('[openPay] Unexpected error saving lead:', e);
+    // Don't block the payment screen — user can still proceed
+  }
+}
+
+function closePay() {
+  document.getElementById('payScreen').classList.remove('open');
+}
+
+async function pay() {
+  const btn = document.getElementById('payBtn');
+  btn.disabled = true;
+
+  // Guard: if openPay() DB insert failed, try once more before launching payment
+  if (!S.submissionId) {
+    showLD('Saving your answers...');
+    try {
+      await openPay(); // re-runs the insert (openPay is idempotent)
+    } catch(e) {}
+    hideLD();
+    if (!S.submissionId) {
+      btn.disabled = false;
+      showToast('Could not save your answers. Please check your connection and try again.', true);
+      return;
+    }
+  }
+
+  showLD('Connecting to payment...');
+
+  try {
+    // Create Cashfree order against the already-saved submission
+    const res = await fetch(CFG.CREATE_ORDER_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + CFG.SUPABASE_ANON_KEY,
+      },
+      body: JSON.stringify({
+        submission_id: S.submissionId,
+        name:          S.answers.name,
+        email:         S.answers.email,
+        amount:        1499,
+      }),
+    });
+    if (!res.ok) throw new Error('Payment server error — please try again');
+    const { payment_session_id, order_id } = await res.json();
+
+    trackEvent('payment_initiated', { submission_id: S.submissionId, order_id });
+
+    hideLD();
+    const cf = Cashfree({ mode: CFG.CASHFREE_ENV });
+    cf.checkout({
+      paymentSessionId: payment_session_id,
+      returnUrl: window.location.origin + '/onboarding?order_id=' + order_id,
+    });
+
+  } catch (e) {
+    hideLD();
+    btn.disabled = false;
+    // Friendly error messages
+    let msg = 'Something went wrong. Please try again.';
+    if (!navigator.onLine) {
+      msg = 'No internet connection. Check your network and try again.';
+    } else if (e.message?.includes('Failed to fetch') || e.message?.includes('NetworkError')) {
+      msg = 'Network error. Please check your connection and try again.';
+    } else if (e.message?.includes('Payment server')) {
+      msg = 'Payment setup failed. Please try again in a moment.';
+    } else if (e.message) {
+      msg = e.message;
+    }
+    showToast(msg, true);
+    console.error('[pay]', e);
+    // Show retry hint after 2s
+    setTimeout(() => {
+      if (!S.submissionId) return; // didn't even save to DB
+      showToast('Your answers are saved. Tap "Pay" to try again.', false);
+    }, 3500);
+  }
+}
+
+/* ── PAYMENT RETURN ───────────────────────────────────────────
+   Called when Cashfree redirects back to /onboarding?order_id=xxx
+   
+   FLOW:
+   1. Restore state from cache (submissionId may be in memory already
+      if same tab, or needs recovery from localStorage after redirect)
+   2. Verify payment server-side via Supabase Edge Function
+      (never trust client-side status — Cashfree return URL can be
+      manipulated or arrive before webhook)
+   3. If verified PAID → show success
+   4. If PENDING → show waiting screen with auto-retry (up to 3×)
+   5. If FAILED → show failure with retry option
+   6. If Edge Function unreachable → optimistic success + webhook
+      will reconcile in background
+─────────────────────────────────────────────────────────────── */
+async function handleReturn() {
+  const params  = new URLSearchParams(window.location.search);
+  const orderId = params.get('order_id');
+  if (!orderId) return;
+
+  // Restore state from cache — critical after Cashfree redirect
+  // (the page is a fresh load, all in-memory state is gone)
+  loadCache();
+
+  showLD('Verifying your payment...');
+
+  // Attempt server-side verification with retries
+  // (webhook may arrive before or after return URL — we poll briefly)
+  const MAX_ATTEMPTS = 4;
+  const RETRY_DELAY  = 2500; // ms between retries
+
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    try {
+      // Call Edge Function to verify — it checks Cashfree API directly
+      // This is the authoritative check, not the client-side return status
+      const verifyUrl = CFG.SUPABASE_URL + '/functions/v1/verify-payment';
+      const res = await fetch(verifyUrl, {
+        method:  'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + CFG.SUPABASE_ANON_KEY,
+        },
+        body: JSON.stringify({ order_id: orderId }),
+      });
+
+      if (!res.ok) throw new Error('verify_failed');
+
+      const { status, submission_id } = await res.json();
+
+      // If verify returned a submission_id, sync it (covers tab-close recovery)
+      if (submission_id && !S.submissionId) {
+        S.submissionId = submission_id;
+        saveCache();
+      }
+
+      if (status === 'PAID') {
+        // Server confirmed paid — show success
+        hideLD();
+        showSuccess(orderId);
+        return;
+      }
+
+      if (status === 'FAILED') {
+        hideLD();
+        showPaymentFailed(orderId);
+        return;
+      }
+
+      // status === 'PENDING' — webhook not yet processed
+      // Wait and retry (Cashfree webhook can lag by a few seconds)
+      if (attempt < MAX_ATTEMPTS) {
+        showLD(`Confirming payment… (${attempt}/${MAX_ATTEMPTS})`);
+        await new Promise(r => setTimeout(r, RETRY_DELAY));
+      }
+
+    } catch (err) {
+      console.warn(`[handleReturn] Verify attempt ${attempt} failed:`, err.message);
+
+      if (attempt < MAX_ATTEMPTS) {
+        await new Promise(r => setTimeout(r, RETRY_DELAY));
+      } else {
+        // All retries exhausted — Edge Function unreachable or erroring
+        // Show optimistic success; webhook will reconcile in Supabase
+        // and Apps Script will send analyst/founder emails once it fires
+        console.warn('[handleReturn] Falling back to optimistic success');
+        hideLD();
+        showSuccess(orderId, /* optimistic */ true);
+        return;
+      }
+    }
+  }
+
+  // Retries exhausted, still pending
+  // Payment likely succeeded but webhook is slow — show waiting state
+  hideLD();
+  showPaymentPending(orderId);
+}
+
+function showPaymentFailed(orderId) {
+  hideLD();
+  document.getElementById('payScreen').classList.add('open');
+  document.getElementById('payBtn').disabled = false;
+  document.getElementById('payBtn').textContent = 'Try Payment Again →';
+  showToast('Payment was not completed. Please try again.', true);
+}
+
+function showPaymentPending(orderId) {
+  hideLD();
+  // Show a friendly "we're checking" message — webhook will sort it out
+  const suc = document.getElementById('sucScreen');
+  suc.classList.add('open');
+  document.getElementById('sucEmail').textContent = S.answers.email || '';
+  document.getElementById('sucWA').textContent    = '+91 ' + (S.answers.whatsapp || '');
+
+  // Override title to reflect uncertainty
+  const title = suc.querySelector('.suc-title');
+  if (title) title.textContent = 'Payment received — confirming...';
+  const sub = suc.querySelector('.suc-sub');
+  if (sub) sub.textContent =
+    'Your payment is being confirmed. If successful, your report will arrive within 24 hours. ' +
+    'If you don\'t receive a confirmation email within 10 minutes, WhatsApp us at +91 98814 37689 with your order ID: ' + orderId;
+}
+
+function showSuccess(orderId, optimistic) {
+  clearCache(); // answers submitted and paid — no need to resume
+  document.getElementById('sucEmail').textContent = S.answers.email || '';
+  document.getElementById('sucWA').textContent    = '+91 ' + (S.answers.whatsapp || '');
+
+  // Show order ID for reference
+  const orderEl = document.getElementById('sucOrderId');
+  if (orderEl && orderId) orderEl.textContent = orderId;
+
+  if (optimistic) {
+    // Payment verified optimistically — add a note
+    const sub = document.getElementById('sucScreen').querySelector('.suc-sub');
+    if (sub) sub.textContent =
+      'Payment confirmed. Your analyst has been briefed. Your 34-page report will arrive within 24 hours. ' +
+      'If you don\'t receive a confirmation email within 10 minutes, please WhatsApp us.';
+  }
+
+  document.getElementById('sucScreen').classList.add('open');
+  document.getElementById('payScreen').classList.remove('open');
+}
+
+/* ════════════════════════════════════════════════════════════════
+   UI HELPERS
+════════════════════════════════════════════════════════════════ */
+function showLD(msg) {
+  document.getElementById('ldMsg').textContent = msg;
+  document.getElementById('ld').classList.add('open');
+}
+function hideLD() { document.getElementById('ld').classList.remove('open'); }
+
+let _tt;
+function showToast(msg, isErr = false) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show' + (isErr ? ' err' : '');
+  clearTimeout(_tt);
+  _tt = setTimeout(() => el.className = 'toast', 3200);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   KEYBOARD
+════════════════════════════════════════════════════════════════ */
+document.addEventListener('keydown', e => {
+  if (['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) return;
+  if (e.key === 'ArrowDown' || e.key === 'ArrowRight') go(1);
+  if (e.key === 'ArrowUp'   || e.key === 'ArrowLeft')  go(-1);
+});
+
+/* ════════════════════════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.location.search.includes('order_id=')) {
+    handleReturn();
+    return;
+  }
+
+  // Try to restore cached progress
+  const restored = loadCache();
+  if (restored && S.idx > 0 && Object.keys(S.answers).length > 0) {
+    // Render the stage first so page isn't blank
+    render(S.idx, 1);
+    // Show resume banner on top
+    const banner = document.createElement('div');
+    banner.id = 'resumeBanner';
+    banner.style.cssText = 'position:fixed;top:3px;left:0;right:0;z-index:999;' +
+      'background:rgba(40,180,133,.14);border-bottom:1px solid rgba(40,180,133,.32);' +
+      'padding:.65rem 1.2rem;display:flex;align-items:center;justify-content:space-between;' +
+      'font-size:.78rem;color:#E0F5EE;font-family:\'Sora\',sans-serif;gap:.8rem;flex-wrap:wrap';
+    banner.innerHTML =
+      '<span>✓ Answers saved — continue where you left off?</span>' +
+      '<div style="display:flex;gap:.6rem;flex-shrink:0">' +
+        '<button id="bnrFresh" style="background:none;border:1px solid rgba(40,180,133,.4);color:#A0D8C8;' +
+          'padding:.3rem .75rem;border-radius:2px;cursor:pointer;font-size:.72rem;font-family:inherit">' +
+          'Start fresh' +
+        '</button>' +
+        '<button id="bnrResume" style="background:rgba(40,180,133,.28);border:1px solid rgba(40,180,133,.55);color:#fff;' +
+          'padding:.3rem .75rem;border-radius:2px;cursor:pointer;font-size:.72rem;font-family:inherit;font-weight:600">' +
+          'Resume →' +
+        '</button>' +
+      '</div>';
+    document.body.appendChild(banner);
+
+    document.getElementById('bnrFresh').addEventListener('click', function() {
+      document.getElementById('resumeBanner').remove();
+      clearCache();
+      S.idx = 0;
+      S.answers = {};
+      render(0, 1);
+    });
+    document.getElementById('bnrResume').addEventListener('click', function() {
+      document.getElementById('resumeBanner').remove();
+    });
+  } else {
+    render(0, 1);
+  }
+});
+</script>
+</body>
+</html>
