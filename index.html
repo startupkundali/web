@@ -327,21 +327,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:900;display:flex;justify-content
 .success-close{background:transparent;border:none;color:var(--t2);font-size:.76rem;cursor:pointer;width:100%;padding:.4rem;font-family:inherit;transition:color .2s}
 .success-close:hover{color:var(--gold)}
 
-/* ── PAYMENT MODAL ── */
-.cf-modal{display:none;position:fixed;inset:0;z-index:8000;background:rgba(0,0,0,.72);backdrop-filter:blur(10px);align-items:center;justify-content:center;padding:1.5rem}
-.cf-modal.open{display:flex}
-.cf-box{background:var(--bg3);border:1px solid var(--bdr2);border-radius:4px;padding:2.2rem;max-width:400px;width:100%;text-align:center}
-.cf-title{font-family:var(--ff-d);font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:.3rem}
-.cf-price{font-family:var(--ff-d);font-size:2.2rem;font-weight:700;color:var(--gold);line-height:1;margin-bottom:.25rem}
-.cf-was{font-size:.8rem;color:var(--t2);text-decoration:line-through;margin-bottom:.8rem}
-.cf-sub{font-size:.8rem;color:var(--t3);margin-bottom:1.1rem;line-height:1.65}
-.cf-input{width:100%;background:rgba(5,5,8,.9);border:1px solid var(--bdr2);color:#fff;padding:.75rem .9rem;font-size:.84rem;border-radius:2px;outline:none;font-family:inherit;transition:border-color .2s;margin-bottom:.65rem}
-.cf-input:focus{border-color:var(--gold)}.cf-input::placeholder{color:var(--t2)}
-.cf-pay-btn{background:var(--gold);color:#000;padding:.88rem;font-weight:700;font-size:.86rem;letter-spacing:.06em;text-transform:uppercase;border:none;border-radius:2px;cursor:pointer;width:100%;font-family:inherit;margin-bottom:.45rem;transition:background .18s}
-.cf-pay-btn:hover{background:var(--gold-lt)}.cf-pay-btn:disabled{opacity:.6;cursor:not-allowed}
-.cf-note{font-size:.67rem;color:var(--t2);line-height:1.5;margin-top:.4rem}
-.cf-close{background:transparent;border:none;color:var(--t2);font-size:.75rem;cursor:pointer;width:100%;padding:.38rem;font-family:inherit;transition:color .2s}
-.cf-close:hover{color:var(--gold)}
 
 /* ── FOOTER ── */
 footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:2.8rem 1.5rem;text-align:center}
@@ -430,47 +415,6 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:2.8rem 1.5r
   </div>
 </div>
 
-<!-- PAYMENT MODAL -->
-<div class="cf-modal" id="cfModal">
-  <div class="cf-box">
-    <div class="cf-title">Unlock My Startup Kundali</div>
-    <div class="cf-price">₹1,499</div>
-    <div class="cf-was">Regular price ₹2,999 · Limited launch offer</div>
-    <div class="cf-sub">Enter your details — we'll send you the questionnaire immediately after payment.</div>
-    <input class="cf-input" type="text" id="cf-name" placeholder="Your Full Name" autocomplete="name"/>
-    <input class="cf-input" type="email" id="cf-email" placeholder="Email Address" autocomplete="email"/>
-    <input class="cf-input" type="text" id="cf-startup" placeholder="Startup / Organisation Name"/>
-    <button class="cf-pay-btn" id="cfPayBtn" onclick="initCashfree()">Pay ₹1,499 & Get My Kundali</button>
-    <div class="cf-note">
-      🔒 Secured by Cashfree Payments · Instant receipt · Questionnaire sent within minutes
-      <!-- ─────────────────────────────────────────────────────────
-           CASHFREE INTEGRATION GUIDE
-           ─────────────────────────────────────────────────────────
-           STEP 1: Add SDK to <head>:
-             <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
-           
-           STEP 2: Create backend route POST /api/create-order
-             - Receives: {name, email, startup, amount: 1499}
-             - Calls Cashfree Orders API with your appId + secretKey
-             - Returns: {payment_session_id, order_id}
-           
-           STEP 3: Replace the fetch() block inside initCashfree() below
-           
-           STEP 4: On payment success, Cashfree redirects to returnUrl
-             Set returnUrl = "https://startupkundali.com/?payment=success"
-             The page detects ?payment=success and shows successOverlay
-           
-           STEP 5: Set up webhook at Cashfree dashboard
-             Webhook URL: https://startupkundali.com/api/payment-webhook
-             On PAYMENT_SUCCESS event:
-               - Log to Google Sheet (use Apps Script web app)
-               - Send questionnaire email via Gmail API or SendGrid
-               - Notify on WhatsApp via WhatsApp Business API
-           ───────────────────────────────────────────────────────── -->
-    </div>
-    <button class="cf-close" onclick="closeCF()">✕ Cancel</button>
-  </div>
-</div>
 
 <!-- NAV -->
 <nav>
@@ -482,7 +426,7 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:2.8rem 1.5r
     <a href="#dimensions" class="nav-hide">12 Dimensions</a>
     <a href="#grants" class="nav-hide">Grants</a>
     <a href="#sample" class="nav-hide">Sample</a>
-    <a href="#" onclick="openCF();return false" class="nav-cta">Unlock My Kundali</a>
+    <a href="#" href="/onboarding" class="nav-cta">Unlock My Kundali</a>
   </div>
 </nav>
 
@@ -523,10 +467,10 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:2.8rem 1.5r
     <p class="hero-desc">12-dimension analysis built on real Indian ecosystem data — government grants matched, GTM mapped, investor gaps closed. Delivered in 24 hours.</p>
     <div class="hero-cta-wrap">
       <div class="hero-btns">
-        <a href="#" onclick="openCF();return false" class="btn-primary">Unlock My Startup Kundali</a>
+        <a href="#" href="/onboarding" class="btn-primary">Unlock My Startup Kundali</a>
         <a href="#sample" class="btn-outline">See Sample Report</a>
       </div>
-      <div class="hero-sub-cta">Offer at ₹1,499 · Regular ₹2,999 · <a href="#" onclick="openCF();return false">Order now, timer above ↑</a></div>
+      <div class="hero-sub-cta">Offer at ₹1,499 · Regular ₹2,999 · <a href="#" href="/onboarding">Order now, timer above ↑</a></div>
     </div>
     <div class="hero-stats">
       <div class="hst"><div class="hst-n">34</div><div class="hst-l">Page Report</div></div>
@@ -714,7 +658,7 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:2.8rem 1.5r
       </div>
     </div>
     <div style="margin-top:1.8rem" class="rev">
-      <a href="#" onclick="openCF();return false" class="btn-primary">Get My Full Kundali Report</a>
+      <a href="#" href="/onboarding" class="btn-primary">Get My Full Kundali Report</a>
     </div>
   </div>
 </section>
@@ -774,9 +718,10 @@ footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:2.8rem 1.5r
         <div class="pc-li"><div class="pc-ck">✓</div>Investor readiness scorecard</div>
         <div class="pc-li"><div class="pc-ck">✓</div>90-day action plan</div>
         <div class="pc-li"><div class="pc-ck">✓</div>Analyst-reviewed — not an instant generic PDF</div>
+        <div class="pc-li" style="color:var(--green)"><div class="pc-ck" style="background:rgba(45,181,138,.12);border-color:rgba(45,181,138,.35)">✓</div><strong>100% money back</strong>&nbsp;if not delivered within 24 hours</div>
       </div>
       <div class="pc-urg">⚡ Introductory pricing — increases when early batch closes.</div>
-      <button class="btn-primary" style="display:block;width:100%;text-align:center;border:none;cursor:pointer;margin-top:1.1rem;padding:1rem" onclick="openCF()">Unlock My Startup Kundali — ₹1,499</button>
+      <a href="/onboarding" class="btn-primary" style="display:block;width:100%;text-align:center;border:none;cursor:pointer;margin-top:1.1rem;padding:1rem">Unlock My Startup Kundali — ₹1,499</a>
       <div class="pc-note">🔒 Secured by Cashfree · Questionnaire sent within minutes · Report in 24 hours</div>
     </div>
   </div>
@@ -974,93 +919,6 @@ var toastT;
 window.showToast=function(m){var t=document.getElementById('toast');document.getElementById('toast-msg').textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove('show');},3000);};
 window.hideToast=function(){document.getElementById('toast').classList.remove('show');};
 
-/* ── PAYMENT MODAL ── */
-window.openCF=function(){
-  document.getElementById('cfModal').classList.add('open');
-  document.body.style.overflow='hidden';
-};
-window.closeCF=function(){
-  document.getElementById('cfModal').classList.remove('open');
-  document.body.style.overflow='';
-};
-document.getElementById('cfModal').addEventListener('click',function(e){if(e.target===this)closeCF();});
-
-/* ─────────────────────────────────────────────────────────────
-   CASHFREE INTEGRATION — REPLACE initCashfree() BODY
-   ─────────────────────────────────────────────────────────────
-   WHEN READY:
-   1. Add to <head>:
-      <script src="https://sdk.cashfree.com/js/v3/cashfree.js"><\/script>
-   
-   2. Create backend endpoint POST /api/create-order:
-      Input:  { name, email, startup, amount: 1499 }
-      Action: Call Cashfree Create Order API
-              POST https://api.cashfree.com/pg/orders
-              Headers: x-client-id, x-client-secret, x-api-version
-              Body: { order_id, order_amount:1499, order_currency:'INR',
-                      customer_details:{name,email,phone} }
-      Output: { payment_session_id, order_id }
-   
-   3. Replace the section below marked [REPLACE] with:
-      var cfInstance = Cashfree({ mode: 'production' });
-      cfInstance.checkout({
-        paymentSessionId: data.payment_session_id,
-        returnUrl: 'https://startupkundali.com/?payment=success&order=' + data.order_id
-      });
-   
-   4. Cashfree redirects to returnUrl on success.
-      Page detects ?payment=success → calls showSuccessScreen()
-   
-   5. Set up webhook in Cashfree Dashboard:
-      URL: https://startupkundali.com/api/webhook
-      On PAYMENT_SUCCESS:
-        a) Log to Google Sheet via Apps Script web app
-        b) Send questionnaire email via Gmail/SendGrid
-        c) Optional: WhatsApp notification via Meta Business API
-   ──────────────────────────────────────────────────────────── */
-
-window.initCashfree=function(){
-  var name=document.getElementById('cf-name').value.trim();
-  var email=document.getElementById('cf-email').value.trim();
-  var startup=document.getElementById('cf-startup').value.trim();
-  var btn=document.getElementById('cfPayBtn');
-  if(!name){showToast('Please enter your name.');return;}
-  if(!email||!email.includes('@')){showToast('Please enter a valid email.');return;}
-  if(!startup){showToast('Please enter your startup name.');return;}
-  btn.disabled=true;btn.textContent='Processing...';btn.style.opacity='.7';
-
-  /* [REPLACE] — start Cashfree SDK here.
-     Until integrated, bridge via email: */
-  closeCF();
-  showSuccessScreen(name, email);
-  
-  // Also send mailto as notification bridge until webhook is live
-  var sub=encodeURIComponent('NEW ORDER — Startup Kundali — '+startup);
-  var body=encodeURIComponent('New order received:\n\nName: '+name+'\nEmail: '+email+'\nStartup: '+startup+'\nAmount: ₹1,499\n\nPlease send questionnaire form link immediately.');
-  setTimeout(function(){
-    window.open('mailto:startupkundali@gmail.com?subject='+sub+'&body='+body,'_blank');
-    btn.disabled=false;btn.textContent='Pay ₹1,499 & Get My Kundali';btn.style.opacity='1';
-  },400);
-};
-
-function showSuccessScreen(name, email){
-  document.getElementById('successOverlay').classList.add('open');
-  document.body.style.overflow='hidden';
-}
-window.hideSuccess=function(){
-  document.getElementById('successOverlay').classList.remove('open');
-  document.body.style.overflow='';
-};
-
-// Detect payment=success in URL (from Cashfree returnUrl)
-(function(){
-  var params=new URLSearchParams(window.location.search);
-  if(params.get('payment')==='success'){
-    setTimeout(function(){showSuccessScreen('','');},500);
-    // Clean URL
-    window.history.replaceState({},'',window.location.pathname);
-  }
-})();
 
 /* ── SAMPLE UNLOCK ── */
 window.unlockReport=function(){
