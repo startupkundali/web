@@ -1538,6 +1538,10 @@ async function openPay() {
 
 function closePay() {
   document.getElementById('payScreen').classList.remove('open');
+  // Clear submissionId so if user edits answers and comes back,
+  // a fresh insert happens with updated data
+  S.submissionId = null;
+  saveCache();
 }
 
 async function pay() {
@@ -1572,7 +1576,7 @@ async function pay() {
         submission_id: S.submissionId,
         name:          S.answers.name,
         email:         S.answers.email,
-        amount:        1499,
+        amount:        1499,   // hardcoded — never 0
       }),
     });
     if (!res.ok) throw new Error('Payment server error — please try again');
@@ -1631,8 +1635,10 @@ async function handleReturn() {
   const orderId = params.get('order_id');
   if (!orderId) return;
 
+  // Clean URL immediately — prevents re-triggering on manual refresh
+  window.history.replaceState({}, '', window.location.pathname);
+
   // Restore state from cache — critical after Cashfree redirect
-  // (the page is a fresh load, all in-memory state is gone)
   loadCache();
 
   showLD('Verifying your payment...');
@@ -1695,9 +1701,9 @@ async function handleReturn() {
         // All retries exhausted — Edge Function unreachable or erroring
         // Show optimistic success; webhook will reconcile in Supabase
         // and Apps Script will send analyst/founder emails once it fires
-        console.warn('[handleReturn] Falling back to optimistic success');
+        console.warn('[handleReturn] Verify failed after retries — showing pending');
         hideLD();
-        showSuccess(orderId, /* optimistic */ true);
+        showPaymentPending(orderId);
         return;
       }
     }
