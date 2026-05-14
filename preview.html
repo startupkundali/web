@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>Get Your Free Startup Kundali Preview — See Your Destiny Score</title>
 <meta name="description" content="Answer 6 questions. Get a free personalised 2-page preview of your Startup Kundali — your Destiny Score, top insights, and a note from Ronit. Free.">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -396,11 +399,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;
     <div class="field-row">
       <div class="field">
         <label>Your Name *</label>
-        <input type="text" id="f_name" placeholder="e.g. Priya Sharma" autocomplete="name"/>
+        <input type="text" id="f_name" placeholder="e.g. Aarav Shah" autocomplete="name"/>
       </div>
       <div class="field">
         <label>Startup Name *</label>
-        <input type="text" id="f_startup" placeholder="e.g. DocBot, Zepto"/>
+        <input type="text" id="f_startup" placeholder="e.g. Zepto, Nua, Razorpay"/>
       </div>
     </div>
 
@@ -450,25 +453,25 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;
 
     <div class="field">
       <label>What problem are you solving? *</label>
-      <textarea id="f_problem" placeholder="e.g. Rural clinics in Tier-3 India have no access to basic diagnostics — patients travel 50km for a blood test that should take 5 minutes." maxlength="300" oninput="updateCounter(this,'f_problem_count',300)" rows="3"></textarea>
+      <textarea id="f_problem" placeholder="e.g. Kirana stores in Tier-2 India spend 4+ hours a week managing inventory manually — there's no affordable digital tool built for them. OR: 800M Indians can't access basic health diagnostics within 10km of their home." maxlength="300" oninput="updateCounter(this,'f_problem_count',300)" rows="3"></textarea>
       <div class="char-counter"><span id="f_problem_count">0</span>/300</div>
     </div>
 
     <div class="field">
       <label>What is your solution? *</label>
-      <textarea id="f_solution" placeholder="e.g. DocBot is a portable health kiosk that delivers 100+ diagnostics in under 5 minutes. We integrate 5 certified medical devices into one cabinet with AI-powered triage." maxlength="300" oninput="updateCounter(this,'f_solution_count',300)" rows="3"></textarea>
+      <textarea id="f_solution" placeholder="e.g. Zepto built 10-minute grocery delivery by placing dark stores every 2km in dense neighbourhoods. OR: We've built a WhatsApp-native inventory app that syncs with the distributor automatically — no training needed." maxlength="300" oninput="updateCounter(this,'f_solution_count',300)" rows="3"></textarea>
       <div class="char-counter"><span id="f_solution_count">0</span>/300</div>
     </div>
 
     <div class="field">
       <label>Explain your startup idea in detail *<span style="color:var(--t2);font-weight:normal;text-transform:none;font-family:var(--ff-b);letter-spacing:0;font-size:.72rem"> — business model, who pays, how you make money</span></label>
-      <textarea id="f_idea" placeholder="e.g. B2B model — we sell kiosks to PHCs, private clinics, and corporate campuses. Each kiosk is ₹2.5L upfront + ₹8,000/month SaaS. We also earn per-test revenue of ₹50-200 per diagnostic. Targeting 500 kiosks in 3 years." maxlength="400" oninput="updateCounter(this,'f_idea_count',400)" rows="4"></textarea>
+      <textarea id="f_idea" placeholder="e.g. B2B SaaS — charge ₹2,999/month per store, distributor pays onboarding fee. OR: B2C with freemium — free for 50 orders/month, ₹499/month after. Target: 1,000 stores in 12 months across Maharashtra." maxlength="400" oninput="updateCounter(this,'f_idea_count',400)" rows="4"></textarea>
       <div class="char-counter"><span id="f_idea_count">0</span>/400</div>
     </div>
 
     <div class="field">
       <label>Current traction <span style="color:var(--t2);font-weight:normal;text-transform:none;font-family:var(--ff-b);letter-spacing:0;font-size:.72rem">— revenue, customers, pilots, LOIs (be honest, even if zero)</span></label>
-      <textarea id="f_traction" placeholder="e.g. 2 pilot kiosks live in Nagpur. ₹0 revenue currently. 3 LOIs from private clinics. 1 government PHC in discussion. OR: Pre-revenue, no customers yet, still in prototype phase." maxlength="250" oninput="updateCounter(this,'f_traction_count',250)" rows="3"></textarea>
+      <textarea id="f_traction" placeholder="e.g. 12 paying customers, ₹18,000 MRR. OR: 3 pilots running, 0 revenue, 2 LOIs signed. OR: Pre-revenue — product ready, reaching out to first customers. Be honest, even zero is fine." maxlength="250" oninput="updateCounter(this,'f_traction_count',250)" rows="3"></textarea>
       <div class="char-counter"><span id="f_traction_count">0</span>/250</div>
     </div>
 
@@ -823,32 +826,10 @@ async function handleSubmit() {
     await new Promise(r => setTimeout(r, 4500));
 
     renderPreview(data2);
-    // Clean handoff — full page replacement
+    // FULL PAGE SWAP — guaranteed clean slate
     document.getElementById('loadingScreen').classList.remove('open');
     document.body.style.overflow = '';
-    // Make preview fixed temporarily to render at top
-    const ps = document.getElementById('previewScreen');
-    ps.style.position = 'fixed';
-    ps.style.top = '0';
-    ps.style.left = '0';
-    ps.style.right = '0';
-    ps.style.zIndex = '400';
-    ps.style.background = 'var(--bg1)';
-    ps.style.overflowY = 'auto';
-    ps.style.height = '100vh';
-    ps.classList.add('open');
-    // After a tick, restore normal flow and scroll
-    setTimeout(() => {
-      ps.style.position = '';
-      ps.style.top = '';
-      ps.style.left = '';
-      ps.style.right = '';
-      ps.style.zIndex = '';
-      ps.style.background = '';
-      ps.style.overflowY = '';
-      ps.style.height = '';
-      window.scrollTo({ top: 0, behavior: 'instant' });
-    }, 50);
+    showPreviewPage();
 
   } catch(e) {
     console.error(e);
@@ -859,27 +840,7 @@ async function handleSubmit() {
     renderFallback();
     document.getElementById('loadingScreen').classList.remove('open');
     document.body.style.overflow = '';
-    const ps2 = document.getElementById('previewScreen');
-    ps2.style.position = 'fixed';
-    ps2.style.top = '0';
-    ps2.style.left = '0';
-    ps2.style.right = '0';
-    ps2.style.zIndex = '400';
-    ps2.style.background = 'var(--bg1)';
-    ps2.style.overflowY = 'auto';
-    ps2.style.height = '100vh';
-    ps2.classList.add('open');
-    setTimeout(() => {
-      ps2.style.position = '';
-      ps2.style.top = '';
-      ps2.style.left = '';
-      ps2.style.right = '';
-      ps2.style.zIndex = '';
-      ps2.style.background = '';
-      ps2.style.overflowY = '';
-      ps2.style.height = '';
-      window.scrollTo({ top: 0, behavior: 'instant' });
-    }, 50);
+    showPreviewPage();
   }
 }
 
@@ -1046,27 +1007,82 @@ function renderFallback() {
 
 /* ── SHARE FUNCTIONS ── */
 function shareWhatsApp() {
-  const score = document.getElementById('pr_score').textContent;
-  const startup = document.getElementById('pr_startup').textContent;
-  const rank = document.getElementById('pr_rank').textContent;
-  const text = `Just got my Startup Kundali for ${startup}! 🎯\n\nDestiny Score: ${score}/100\n${rank}\n\nGet yours free → startupkundali.com`;
+  const score = document.getElementById('p_score')?.textContent || document.getElementById('pr_score')?.textContent || '—';
+  const startup = document.getElementById('p_name')?.textContent || document.getElementById('pr_startup')?.textContent || 'my startup';
+  const rank = document.getElementById('p_rank')?.textContent || '';
+  const sector = F.sector || 'tech';
+  const text = `My Startup Kundali just dropped. 🎯
+
+${startup} scored ${score}/100 on the Destiny Score.
+${rank ? rank + '.' : ''}
+
+It maps your startup across 12 dimensions — idea, market fit, IP, govt schemes, investor readiness, everything. Built on 40+ Indian ecosystem sources.
+
+If you're building something in India, get yours free 👇
+startupkundali.com`;
   window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
 }
 
 function shareLinkedIn() {
+  const score = document.getElementById('p_score')?.textContent || document.getElementById('pr_score')?.textContent || '—';
+  const startup = document.getElementById('p_name')?.textContent || document.getElementById('pr_startup')?.textContent || 'my startup';
+  const rank = document.getElementById('p_rank')?.textContent || '';
+  const sector = F.sector || 'tech';
   const url = 'https://startupkundali.com/preview';
-  const startup = document.getElementById('pr_startup').textContent;
-  const score = document.getElementById('pr_score').textContent;
-  const text = `Just got my Startup Kundali for ${startup} — Destiny Score: ${score}/100. Get yours free at startupkundali.com`;
-  window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}&summary=${encodeURIComponent(text)}`, '_blank');
+  const text = `I ran ${startup} through Startup Kundali — an AI that scores ${sector} startups across 12 dimensions using 40+ Indian ecosystem sources.
+
+Destiny Score: ${score}/100. ${rank ? rank + '.' : ''}
+
+It flagged exactly what I needed to fix before my next investor conversation — IP position, GTM sequencing, and govt schemes I didn't know I qualified for.
+
+If you're building in India, get yours free 👇
+startupkundali.com/preview`;
+  window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(url) + '&summary=' + encodeURIComponent(text), '_blank');
 }
 
 function shareInstagram() {
-  showToast('Screenshot your card and share it on Instagram Stories!');
+  // Download card for Instagram story
+  showToast('💡 Screenshot the card above — paste it into your Instagram Story with the link sticker: startupkundali.com');
 }
 
 function saveCard() {
-  showToast('Screenshot the card above to save it!');
+  showToast('📲 Screenshot the card above to save and share it anywhere.');
+}
+
+/* ── PAGE SWAP — guaranteed clean preview page ── */
+function showPreviewPage() {
+  // Grab the preview HTML
+  const previewHTML = document.getElementById('previewScreen').innerHTML;
+  const navHTML = document.querySelector('nav').outerHTML;
+
+  // Nuke entire body, inject only nav + preview
+  document.body.innerHTML = navHTML + `
+    <div id="previewScreen" class="open" style="position:relative;z-index:1;padding:5rem 1.25rem 4rem;animation:slideIn .5s ease">
+      ${previewHTML}
+    </div>
+    <div id="toast" class="toast"></div>`;
+
+  // Re-add grain overlay
+  document.body.style.background = 'var(--bg1)';
+
+  // Bind share buttons (re-attached after innerHTML swap)
+  const btns = document.querySelectorAll('.sbtn');
+  if (btns[0]) btns[0].onclick = shareWhatsApp;
+  if (btns[1]) btns[1].onclick = shareLinkedIn;
+  if (btns[2]) btns[2].onclick = shareInstagram;
+  if (btns[3]) btns[3].onclick = saveCard;
+
+  // Animate bars after render
+  setTimeout(() => {
+    document.querySelectorAll('.dim-fill').forEach(b => {
+      const w = b.style.width;
+      b.style.width = '0';
+      setTimeout(() => { b.style.width = w; }, 100);
+    });
+  }, 300);
+
+  // Scroll to very top
+  window.scrollTo(0, 0);
 }
 
 /* ── OTHER SECTOR TOGGLE ── */
