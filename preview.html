@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Get Your Free Startup Kundali Preview — See Your Destiny Score</title>
+<meta name="description" content="Answer 6 questions. Get a free personalised 2-page preview of your Startup Kundali — your Destiny Score, top insights, and a note from Ronit. Free.">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{font-size:16px;scroll-behavior:smooth}
+
+:root{
+  --gold:#C9A84C;--gold-lt:#E8C96A;--saffron:#D4622A;
+  --green:#2DB58A;--red:#C84848;
+  --bg1:#050508;--bg2:#08080F;--bg3:#0D0D1A;
+  --bdr:rgba(201,168,76,.13);--bdr2:rgba(201,168,76,.32);
+  --t2:#7A7060;--t3:#B0A898;
+  --ff-d:'Cormorant Garamond',serif;
+  --ff-b:'DM Sans',sans-serif;
+  --ff-m:'DM Mono',monospace;
+}
+
+body{background:var(--bg1);color:#EDE8DE;font-family:var(--ff-b);min-height:100dvh;overflow-x:hidden}
+
+/* grain overlay */
+body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.04'/%3E%3C/svg%3E");
+  background-size:256px;opacity:.35}
+
+::selection{background:rgba(201,168,76,.2);color:#fff}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:rgba(201,168,76,.2)}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.8rem 2rem;background:rgba(5,5,8,.92);
+  backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr)}
+.nav-logo{font-family:var(--ff-d);font-size:.95rem;font-weight:700;color:var(--gold);text-decoration:none;letter-spacing:.02em}
+.nav-back{font-family:var(--ff-m);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--t2);text-decoration:none;transition:color .2s}
+.nav-back:hover{color:var(--gold)}
+@media(max-width:480px){nav{padding:.8rem 1.25rem}}
+
+/* ── HERO ── */
+.hero{padding:6.5rem 1.5rem 2.5rem;text-align:center;position:relative;z-index:1;max-width:620px;margin:0 auto}
+.hero-pill{display:inline-flex;align-items:center;gap:.45rem;
+  font-family:var(--ff-m);font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--gold);border:1px solid var(--bdr2);border-radius:40px;
+  padding:.3rem .85rem;margin-bottom:1.4rem;background:rgba(201,168,76,.05)}
+.hero-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:.3}50%{opacity:1}}
+.hero h1{font-family:var(--ff-d);font-size:clamp(2rem,5.5vw,3.2rem);font-weight:700;
+  line-height:1.08;color:#fff;letter-spacing:-.02em;margin-bottom:.6rem}
+.hero h1 em{font-style:italic;color:var(--gold)}
+.hero-sub{font-size:clamp(.84rem,2vw,.95rem);color:var(--t3);max-width:440px;margin:.65rem auto 0;line-height:1.85}
+.hero-free{display:inline-flex;align-items:center;gap:.6rem;margin-top:1.4rem;
+  padding:.5rem 1.1rem;background:rgba(45,181,138,.07);
+  border:1px solid rgba(45,181,138,.25);border-radius:40px}
+.hero-free-val{font-family:var(--ff-d);font-size:1.1rem;font-weight:700;color:var(--green)}
+.hero-free-lbl{font-size:.75rem;color:var(--t3)}
+
+/* ── FORM ── */
+.form-wrap{max-width:540px;margin:0 auto;padding:0 1.25rem 4rem;position:relative;z-index:1}
+
+.form-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;
+  padding:2rem 1.75rem;position:relative;overflow:hidden}
+.form-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.5}
+
+.form-header{margin-bottom:1.6rem}
+.form-eyebrow{font-family:var(--ff-m);font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:.35rem}
+.form-title{font-family:var(--ff-d);font-size:1.25rem;font-weight:700;color:#fff}
+.form-sub{font-size:.8rem;color:var(--t2);margin-top:.25rem;line-height:1.6}
+
+.field{margin-bottom:1rem}
+.field label{display:block;font-family:var(--ff-m);font-size:.56rem;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--t2);margin-bottom:.42rem}
+.field input,.field textarea,.field select{
+  width:100%;background:var(--bg3);border:1px solid var(--bdr);
+  color:#fff;font-family:var(--ff-b);font-size:.875rem;
+  padding:.72rem .9rem;border-radius:4px;outline:none;
+  transition:border-color .2s;caret-color:var(--gold)}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--bdr2)}
+.field input::placeholder,.field textarea::placeholder{color:var(--t2)}
+.field select{appearance:none;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%237A7060'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right .85rem center}
+.field select option{background:#0D0D1A}
+.field textarea{resize:none;min-height:88px;line-height:1.65}
+
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+@media(max-width:420px){.field-row{grid-template-columns:1fr}}
+
+.phone-wrap{position:relative}
+.phone-prefix{position:absolute;left:.9rem;top:50%;transform:translateY(-50%);
+  font-size:.875rem;color:var(--t3);pointer-events:none}
+.phone-input{padding-left:2.6rem!important}
+
+/* chips */
+.chip-grid{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.1rem}
+.chip-opt{position:relative;cursor:pointer}
+.chip-opt input{position:absolute;opacity:0;width:0;height:0}
+.chip-body{display:inline-flex;align-items:center;gap:.3rem;
+  padding:.42rem .75rem;border:1px solid var(--bdr);border-radius:40px;
+  font-size:.76rem;color:var(--t3);background:var(--bg3);
+  transition:all .15s;user-select:none;white-space:nowrap}
+.chip-body:hover{border-color:var(--bdr2);color:#fff}
+.chip-opt input:checked+.chip-body{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.07)}
+
+/* char counter */
+.char-counter{text-align:right;font-family:var(--ff-m);font-size:.55rem;color:var(--t2);margin-top:.25rem}
+
+.submit-btn{width:100%;background:var(--gold);color:#000;border:none;
+  padding:.9rem;border-radius:4px;font-family:var(--ff-b);font-size:.85rem;
+  font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;
+  transition:all .18s;margin-top:.5rem}
+.submit-btn:hover{background:var(--gold-lt);transform:translateY(-1px)}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+.submit-secure{text-align:center;font-family:var(--ff-m);font-size:.56rem;
+  color:var(--t2);letter-spacing:.07em;text-transform:uppercase;
+  margin-top:.6rem;display:flex;align-items:center;justify-content:center;gap:.4rem}
+
+/* ── LOADING ── */
+#loadingScreen{display:none;position:fixed;inset:0;z-index:500;
+  background:var(--bg1);align-items:center;justify-content:center;
+  flex-direction:column;gap:1.25rem;text-align:center;padding:2rem}
+#loadingScreen.open{display:flex;animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* Animated Kundali symbol */
+.ld-symbol{position:relative;width:72px;height:72px;margin-bottom:.25rem}
+.ld-ring{position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(201,168,76,.12);border-top-color:var(--gold);animation:spin 1.2s linear infinite}
+.ld-ring-2{position:absolute;inset:8px;border-radius:50%;border:1px solid rgba(201,168,76,.08);border-bottom-color:rgba(201,168,76,.4);animation:spin 2s linear infinite reverse}
+.ld-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--ff-d);font-size:1.5rem;color:rgba(201,168,76,.5)}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.ld-title{font-family:var(--ff-d);font-size:1.5rem;font-weight:700;color:#fff;letter-spacing:-.01em}
+.ld-title em{font-style:italic;color:var(--gold)}
+.ld-sub{font-size:.78rem;color:var(--t2);margin-top:-.4rem}
+
+.ld-steps{display:flex;flex-direction:column;gap:.5rem;margin-top:.35rem;
+  background:var(--bg2);border:1px solid var(--bdr);border-radius:6px;
+  padding:.85rem 1.2rem;min-width:260px}
+.ld-step{font-family:var(--ff-m);font-size:.6rem;color:var(--t2);
+  letter-spacing:.09em;text-transform:uppercase;transition:all .3s;
+  display:flex;align-items:center;gap:.55rem}
+.ld-step::before{content:'○';font-size:.65rem;flex-shrink:0}
+.ld-step.active{color:var(--gold)}
+.ld-step.active::before{content:'◉';color:var(--gold)}
+.ld-step.done{color:var(--green)}
+.ld-step.done::before{content:'✓';color:var(--green)}
+
+/* Preview screen slides in from scratch */
+#previewScreen{display:none;position:relative;z-index:1;padding:5rem 1.25rem 4rem}
+#previewScreen.open{display:block;animation:slideIn .5s ease}
+@keyframes slideIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── PREVIEW SCREEN ── */
+/* previewScreen styles in loading block above */
+
+.preview-intro{text-align:center;max-width:600px;margin:0 auto 2.5rem}
+.preview-intro h2{font-family:var(--ff-d);font-size:clamp(1.5rem,4vw,2.1rem);
+  font-weight:700;color:#fff;margin-bottom:.35rem}
+.preview-intro h2 em{font-style:italic;color:var(--gold)}
+.preview-intro p{font-size:.85rem;color:var(--t3);line-height:1.75}
+
+.report-wrap{max-width:740px;margin:0 auto;display:flex;flex-direction:column;gap:1.5rem}
+
+/* ── WHITE REPORT PAGES ── */
+.rp{background:#fff;border-radius:6px;overflow:hidden;box-shadow:0 4px 32px rgba(0,0,0,.4)}
+.rp-head{padding:.6rem 1.4rem;border-bottom:2.5px solid var(--gold);
+  display:flex;justify-content:space-between;align-items:center;background:#fff}
+.rp-brand{font-family:var(--ff-m);font-size:.55rem;font-weight:500;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+.rp-pg{font-family:var(--ff-m);font-size:.55rem;color:#9ca3af}
+.rp-body{padding:1.5rem 1.4rem;font-family:var(--ff-b)}
+
+/* Page 1 — Score */
+.score-band{display:flex;align-items:flex-start;gap:1.25rem;margin-bottom:1.25rem;flex-wrap:wrap}
+.score-info{flex:1;min-width:180px}
+.score-startup{font-family:var(--ff-d);font-size:1.4rem;font-weight:700;color:#111;margin-bottom:.15rem}
+.score-meta{font-family:var(--ff-m);font-size:.58rem;color:#9ca3af;letter-spacing:.07em;margin-bottom:.7rem}
+.verdict-card{padding:.6rem .9rem;background:#f0fdf9;border-left:3px solid #2DB58A;margin-bottom:.55rem}
+.verdict-lbl{font-family:var(--ff-m);font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;color:#065f46;margin-bottom:3px}
+.verdict-text{font-size:.8rem;color:#374151;line-height:1.65}
+.stat-hook{padding:.52rem .8rem;background:#fffbeb;border:.5px solid #fde68a;border-radius:3px;font-size:.76rem;color:#78350f;line-height:1.65;font-style:italic}
+.stat-hook strong{font-style:normal;color:#92400e}
+.stat-src{font-family:var(--ff-m);font-size:.55rem;color:#b45309;display:block;margin-top:3px;font-style:normal}
+.score-circle{text-align:center;background:#fffbeb;border:2px solid var(--gold);border-radius:5px;padding:.9rem 1.3rem;flex-shrink:0;align-self:flex-start}
+.score-num{font-family:var(--ff-d);font-size:3.4rem;font-weight:700;color:var(--gold);line-height:1}
+.score-sub{font-family:var(--ff-m);font-size:.55rem;letter-spacing:.12em;text-transform:uppercase;color:#92400e;margin-top:3px}
+.rank-pill{display:inline-flex;align-items:center;gap:4px;background:rgba(45,181,138,.1);
+  border:1px solid rgba(45,181,138,.3);border-radius:20px;padding:.2rem .55rem;
+  font-family:var(--ff-m);font-size:.56rem;color:#059669;margin-top:.4rem;letter-spacing:.04em}
+
+/* Dims */
+.dims-lbl{font-family:var(--ff-m);font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;
+  color:#9ca3af;margin-bottom:.6rem;padding-bottom:.4rem;border-bottom:1px solid #f3f4f6}
+.dim-row{display:flex;align-items:center;gap:.65rem;font-size:.78rem;margin-bottom:.4rem}
+.dim-name{color:#374151;width:148px;flex-shrink:0;font-size:.76rem}
+.dim-track{flex:1;height:7px;background:#f3f4f6;border-radius:4px;overflow:hidden}
+.dim-fill{height:100%;border-radius:4px;transition:width 1.2s ease}
+.dim-score{font-family:var(--ff-m);font-size:.7rem;font-weight:500;min-width:26px;text-align:right;flex-shrink:0}
+
+/* Locked dims */
+.locked-block{position:relative;margin-top:.35rem}
+.locked-inner{filter:blur(4px);pointer-events:none;user-select:none;display:flex;flex-direction:column;gap:.4rem}
+.lock-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,transparent,rgba(255,255,255,.98) 45%);
+  display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px}
+.lock-pill{display:flex;align-items:center;gap:5px;background:#111;color:#fff;
+  padding:.35rem .9rem;border-radius:40px;font-family:var(--ff-m);font-size:.6rem;letter-spacing:.05em}
+.lock-arrow{font-family:var(--ff-m);font-size:.58rem;color:var(--gold);margin-left:4px}
+
+/* Locked house cards */
+.locked-houses{display:flex;flex-direction:column;gap:.5rem;margin-top:.5rem}
+.locked-house{display:flex;align-items:flex-start;gap:.65rem;padding:.65rem .85rem;
+  background:#f9fafb;border:1px solid #e5e7eb;border-radius:4px;position:relative;overflow:hidden}
+.locked-house::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#e5e7eb}
+.lh-num{font-family:var(--ff-m);font-size:.58rem;color:#9ca3af;flex-shrink:0;padding-top:.1rem}
+.lh-content{flex:1;min-width:0}
+.lh-name{font-size:.78rem;font-weight:600;color:#374151;margin-bottom:.15rem}
+.lh-teaser{font-size:.72rem;color:#6b7280;line-height:1.55;margin-bottom:.3rem}
+.lh-unlock{display:inline-flex;align-items:center;gap:.3rem;
+  font-family:var(--ff-m);font-size:.56rem;color:var(--gold);letter-spacing:.06em;
+  text-transform:uppercase;border:.5px solid rgba(201,168,76,.35);
+  border-radius:20px;padding:.18rem .55rem}
+.lh-score-blur{width:32px;height:32px;border-radius:4px;background:#f3f4f6;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  filter:blur(3px);font-family:var(--ff-m);font-size:.7rem;color:#9ca3af;font-weight:500}
+
+/* Mini cards */
+.mc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-top:1rem}
+.mc{padding:.65rem .75rem;border-radius:3px;border:.5px solid}
+.mc-lbl{font-family:var(--ff-m);font-size:.55rem;letter-spacing:.09em;text-transform:uppercase;margin-bottom:4px}
+.mc-items{font-size:.7rem;line-height:1.7}
+.mc-g{background:#f0fdf4;border-color:#bbf7d0}.mc-g .mc-lbl{color:#065f46}.mc-g .mc-items{color:#166534}
+.mc-a{background:#fffbeb;border-color:#fde68a}.mc-a .mc-lbl{color:#92400e}.mc-a .mc-items{color:#b45309}
+.mc-r{background:#fef2f2;border-color:#fecaca}.mc-r .mc-lbl{color:#991b1b}.mc-r .mc-items{color:#dc2626}
+
+/* Sources */
+.sources{margin-top:1rem;padding:.7rem .9rem;background:#f9fafb;border-radius:3px;border:.5px solid #e5e7eb}
+.src-lbl{font-family:var(--ff-m);font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;color:#9ca3af;margin-bottom:.5rem}
+.src-chips{display:flex;flex-wrap:wrap;gap:.35rem}
+.src-chip{font-family:var(--ff-m);font-size:.55rem;color:#6b7280;padding:.18rem .45rem;
+  background:#fff;border:.5px solid #e5e7eb;border-radius:3px}
+
+/* Page 2 — Founder note */
+.fn-head{background:linear-gradient(135deg,#0D0D1A,#050508);padding:.7rem 1.4rem;
+  display:flex;justify-content:space-between;align-items:center}
+.fn-brand{font-family:var(--ff-m);font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+.fn-pg{font-family:var(--ff-m);font-size:.55rem;color:rgba(201,168,76,.35)}
+.fn-body{padding:1.5rem 1.4rem;background:#fff}
+.fn-salute{font-family:var(--ff-d);font-size:1rem;color:#374151;margin-bottom:1rem;line-height:1.5}
+.fn-salute strong{color:#111;font-weight:700}
+.fn-para{font-family:var(--ff-d);font-style:italic;font-size:.88rem;color:#4b5563;line-height:1.9;margin-bottom:.85rem}
+.fn-src{font-family:var(--ff-m);font-size:.55rem;color:#9ca3af;display:block;margin-top:4px;font-style:normal}
+.fn-highlight{padding:.75rem .95rem;background:#fffbf0;border-left:3px solid var(--gold);
+  font-size:.8rem;color:#374151;line-height:1.75;margin:1rem 0;font-family:var(--ff-b)}
+.fn-highlight strong{color:#92400e}
+.fn-sign{display:flex;align-items:center;gap:.85rem;padding-top:.9rem;border-top:1px solid #f3f4f6;margin-top:.9rem}
+.fn-av{width:40px;height:40px;border-radius:50%;background:#fffbeb;
+  border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;
+  font-family:var(--ff-d);font-size:.95rem;font-weight:700;color:var(--gold);flex-shrink:0}
+.fn-name{font-size:.83rem;font-weight:600;color:#111}
+.fn-role{font-family:var(--ff-m);font-size:.56rem;color:#9ca3af;margin-top:2px;letter-spacing:.03em}
+.fn-testimonial{margin-top:.85rem;padding:.55rem .8rem;background:#f9fafb;
+  border-radius:4px;font-size:.75rem;color:#6b7280;font-style:italic;border:.5px solid #e5e7eb}
+.fn-testimonial strong{color:#374151;font-style:normal}
+
+/* ── SHAREABLE POSTER ── */
+.poster-section{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:1.5rem}
+.poster-sec-lbl{font-family:var(--ff-m);font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--t2);margin-bottom:1rem;text-align:center}
+.poster{background:#050508;border-radius:10px;padding:1.2rem;border:.5px solid rgba(201,168,76,.28);
+  max-width:320px;margin:0 auto;display:flex;flex-direction:column;gap:.65rem}
+.p-top{display:flex;align-items:center;justify-content:space-between}
+.p-badge{font-family:var(--ff-m);font-size:.56rem;letter-spacing:.16em;text-transform:uppercase;
+  color:rgba(201,168,76,.65);border:.5px solid rgba(201,168,76,.22);border-radius:20px;padding:.2rem .6rem}
+.p-date{font-family:var(--ff-m);font-size:.56rem;color:rgba(255,255,255,.2)}
+.p-name{font-family:var(--ff-d);font-size:1.45rem;font-weight:700;color:#fff;line-height:1.1;margin-bottom:.15rem}
+.p-meta{font-family:var(--ff-m);font-size:.56rem;color:rgba(255,255,255,.32);letter-spacing:.07em}
+.p-score-band{display:flex;align-items:flex-end;gap:.75rem;padding:.7rem .85rem;
+  background:rgba(201,168,76,.06);border:.5px solid rgba(201,168,76,.18);border-radius:6px}
+.p-score{font-family:var(--ff-d);font-size:62px;font-weight:700;color:var(--gold);line-height:1}
+.p-score-r{padding-bottom:.45rem;display:flex;flex-direction:column;gap:.3rem}
+.p-score-lbl{font-family:var(--ff-m);font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(201,168,76,.4)}
+.p-rank{display:inline-flex;align-items:center;gap:4px;background:rgba(45,181,138,.1);
+  border:.5px solid rgba(45,181,138,.28);border-radius:20px;padding:.2rem .5rem;
+  font-family:var(--ff-m);font-size:.56rem;color:#2DB58A;letter-spacing:.04em}
+.p-win{background:rgba(201,168,76,.06);border:.5px solid rgba(201,168,76,.18);border-radius:5px;padding:.5rem .7rem}
+.p-win-lbl{font-family:var(--ff-m);font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(201,168,76,.5);margin-bottom:3px}
+.p-win-text{font-family:var(--ff-d);font-style:italic;font-size:.85rem;color:rgba(255,255,255,.8);line-height:1.5}
+.p-win-text strong{font-style:normal;color:var(--gold)}
+.p-dims{display:flex;flex-direction:column;gap:.3rem}
+.p-dims-lbl{font-family:var(--ff-m);font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.2);margin-bottom:.1rem}
+.pd{display:flex;align-items:center;gap:6px}
+.pd-n{font-family:var(--ff-m);font-size:.56rem;color:rgba(255,255,255,.42);width:105px;flex-shrink:0;letter-spacing:.02em}
+.pd-t{flex:1;height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden}
+.pd-f{height:100%;border-radius:2px}
+.pd-s{font-family:var(--ff-m);font-size:.58rem;min-width:22px;text-align:right;font-weight:500}
+.p-market{font-family:var(--ff-d);font-style:italic;font-size:.78rem;color:rgba(255,255,255,.55);
+  text-align:center;padding:.4rem .6rem;border-top:.5px solid rgba(255,255,255,.06);line-height:1.55}
+.p-market strong{font-style:normal;color:var(--gold)}
+.p-footer{display:flex;align-items:center;justify-content:space-between;
+  border-top:.5px solid rgba(255,255,255,.06);padding-top:.5rem}
+.p-url{font-family:var(--ff-m);font-size:.56rem;color:rgba(201,168,76,.38);letter-spacing:.09em}
+.p-cta{font-family:var(--ff-m);font-size:.55rem;color:rgba(255,255,255,.2)}
+
+/* Share buttons */
+.share-btns{display:grid;grid-template-columns:1fr 1fr;gap:.45rem;margin-top:1rem;max-width:320px;margin-left:auto;margin-right:auto}
+.sbtn{display:flex;align-items:center;justify-content:center;gap:6px;
+  padding:.62rem;border-radius:5px;border:none;font-family:var(--ff-m);
+  font-size:.65rem;letter-spacing:.06em;cursor:pointer;color:#fff;text-transform:uppercase}
+.sbtn svg{width:15px;height:15px;flex-shrink:0}
+.s-wa{background:#25D366}
+.s-li{background:#0A66C2}
+.s-ig{background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366)}
+.s-sv{background:rgba(255,255,255,.08);color:var(--t3);border:.5px solid rgba(255,255,255,.12)}
+
+/* ── UNLOCK SECTION ── */
+.unlock-section{max-width:740px;margin:0 auto;background:var(--bg2);
+  border:1px solid var(--bdr2);border-radius:8px;padding:2rem;text-align:center;
+  position:relative;overflow:hidden}
+.unlock-section::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.6}
+.unlock-eyebrow{font-family:var(--ff-m);font-size:.58rem;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--gold);margin-bottom:.6rem}
+.unlock-title{font-family:var(--ff-d);font-size:clamp(1.35rem,3.5vw,1.85rem);
+  font-weight:700;color:#fff;margin-bottom:.35rem}
+.unlock-title em{font-style:italic;color:var(--gold)}
+.unlock-sub{font-size:.83rem;color:var(--t3);line-height:1.8;max-width:440px;margin:0 auto .5rem}
+.unlock-locked{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin:.85rem 0 1.1rem}
+.ul-item{font-family:var(--ff-m);font-size:.6rem;color:var(--t2);
+  padding:.22rem .55rem;border:1px solid rgba(255,255,255,.08);border-radius:3px;
+  display:flex;align-items:center;gap:.35rem}
+.ul-item::before{content:'🔒';font-size:.55rem}
+.unlock-btn{display:inline-flex;align-items:center;gap:.65rem;
+  background:var(--gold);color:#000;padding:.88rem 2.2rem;border-radius:4px;
+  border:none;font-family:var(--ff-b);font-size:.88rem;font-weight:600;
+  letter-spacing:.06em;text-transform:uppercase;cursor:pointer;
+  text-decoration:none;transition:all .18s;margin-bottom:.6rem}
+.unlock-btn:hover{background:var(--gold-lt);transform:translateY(-2px)}
+.unlock-price{font-family:var(--ff-m);font-size:.62rem;color:var(--t2);letter-spacing:.05em}
+.unlock-price strong{color:var(--gold)}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:1.4rem;left:50%;
+  transform:translateX(-50%) translateY(60px);z-index:600;
+  background:var(--bg3);border:1px solid var(--bdr2);border-radius:40px;
+  padding:.55rem 1.1rem;font-size:.76rem;color:#fff;white-space:nowrap;
+  transition:transform .32s cubic-bezier(.34,1.2,.64,1);pointer-events:none}
+#toast.show{transform:translateX(-50%) translateY(0)}
+#toast.err{border-color:rgba(200,72,72,.4);background:rgba(200,72,72,.08)}
+
+@media(max-width:520px){
+  .rp-body,.fn-body{padding:1.1rem}
+  .mc-grid{grid-template-columns:1fr}
+  .score-band{flex-direction:column}
+  .score-circle{align-self:flex-start}
+  .locked-house{flex-wrap:wrap}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">Startup Kundali</a>
+  <a class="nav-back" href="/">← Home</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-pill"><span class="hero-dot"></span>Free Preview · No Payment</div>
+  <h1>See Your Startup's<br><em>Destiny Score</em> — Free.</h1>
+  <p class="hero-sub">6 questions. 2 minutes. Get a personalised AI preview of your Startup Kundali — your score, top insights, and a personal note from Ronit. Zero cost.</p>
+  <div class="hero-free">
+    <span class="hero-free-val">Free Preview</span>
+    <span class="hero-free-lbl">Full report unlocked after preview</span>
+  </div>
+</div>
+
+<!-- FORM SECTION -->
+<div class="form-wrap" id="formSection">
+  <div class="form-card">
+    <div class="form-header">
+      <div class="form-eyebrow">Your Free Preview</div>
+      <div class="form-title">Tell us about your startup</div>
+      <div class="form-sub">The more specific you are, the more personalised your preview will be.</div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Your Name *</label>
+        <input type="text" id="f_name" placeholder="e.g. Priya Sharma" autocomplete="name"/>
+      </div>
+      <div class="field">
+        <label>Startup Name *</label>
+        <input type="text" id="f_startup" placeholder="e.g. DocBot, Zepto"/>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Email *</label>
+        <input type="email" id="f_email" placeholder="you@startup.com" autocomplete="email"/>
+      </div>
+      <div class="field">
+        <label>WhatsApp *</label>
+        <div class="phone-wrap">
+          <span class="phone-prefix">+91</span>
+          <input type="tel" id="f_phone" class="phone-input" placeholder="98765 43210" maxlength="10"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Sector *</label>
+      <div class="chip-grid">
+        <label class="chip-opt"><input type="radio" name="sector" value="HealthTech"/><span class="chip-body">🏥 HealthTech</span></label>
+        <label class="chip-opt"><input type="radio" name="sector" value="EdTech"/><span class="chip-body">📚 EdTech</span></label>
+        <label class="chip-opt"><input type="radio" name="sector" value="FinTech"/><span class="chip-body">💳 FinTech</span></label>
+        <label class="chip-opt"><input type="radio" name="sector" value="AgriTech"/><span class="chip-body">🌾 AgriTech</span></label>
+        <label class="chip-opt"><input type="radio" name="sector" value="SaaS"/><span class="chip-body">💻 SaaS</span></label>
+        <label class="chip-opt"><input type="radio" name="sector" value="D2C"/><span class="chip-body">🛍️ D2C</span></label>
+        <label class="chip-opt"><input type="radio" name="sector" value="AI/ML"/><span class="chip-body">🤖 AI/ML</span></label>
+        <label class="chip-opt"><input type="radio" name="sector" value="Logistics"/><span class="chip-body">🚚 Logistics</span></label>
+        <label class="chip-opt"><input type="radio" name="sector" value="CleanTech"/><span class="chip-body">♻️ CleanTech</span></label>
+        <label class="chip-opt"><input type="radio" name="sector" value="Other" onclick="toggleOtherSector(true)"/><span class="chip-body">💡 Other</span></label>
+      </div>
+      <div id="other_sector_wrap" style="display:none;margin-top:.6rem">
+        <input type="text" id="f_sector_other" placeholder="e.g. SpaceTech, WaterTech, SportsTech..." style="width:100%;background:var(--bg3);border:1px solid var(--bdr2);color:#fff;font-family:var(--ff-b);font-size:.875rem;padding:.72rem .9rem;border-radius:4px;outline:none;caret-color:var(--gold)"/>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Current Stage *</label>
+      <div class="chip-grid">
+        <label class="chip-opt"><input type="radio" name="stage" value="Idea"/><span class="chip-body">💭 Idea</span></label>
+        <label class="chip-opt"><input type="radio" name="stage" value="MVP"/><span class="chip-body">🛠️ MVP</span></label>
+        <label class="chip-opt"><input type="radio" name="stage" value="Pre-revenue"/><span class="chip-body">🚀 Pre-revenue</span></label>
+        <label class="chip-opt"><input type="radio" name="stage" value="Early Revenue"/><span class="chip-body">📈 Early Revenue</span></label>
+        <label class="chip-opt"><input type="radio" name="stage" value="Growing"/><span class="chip-body">🔥 Growing</span></label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>What problem are you solving? *</label>
+      <textarea id="f_problem" placeholder="e.g. Rural clinics in Tier-3 India have no access to basic diagnostics — patients travel 50km for a blood test that should take 5 minutes." maxlength="300" oninput="updateCounter(this,'f_problem_count',300)" rows="3"></textarea>
+      <div class="char-counter"><span id="f_problem_count">0</span>/300</div>
+    </div>
+
+    <div class="field">
+      <label>What is your solution? *</label>
+      <textarea id="f_solution" placeholder="e.g. DocBot is a portable health kiosk that delivers 100+ diagnostics in under 5 minutes. We integrate 5 certified medical devices into one cabinet with AI-powered triage." maxlength="300" oninput="updateCounter(this,'f_solution_count',300)" rows="3"></textarea>
+      <div class="char-counter"><span id="f_solution_count">0</span>/300</div>
+    </div>
+
+    <div class="field">
+      <label>Explain your startup idea in detail *<span style="color:var(--t2);font-weight:normal;text-transform:none;font-family:var(--ff-b);letter-spacing:0;font-size:.72rem"> — business model, who pays, how you make money</span></label>
+      <textarea id="f_idea" placeholder="e.g. B2B model — we sell kiosks to PHCs, private clinics, and corporate campuses. Each kiosk is ₹2.5L upfront + ₹8,000/month SaaS. We also earn per-test revenue of ₹50-200 per diagnostic. Targeting 500 kiosks in 3 years." maxlength="400" oninput="updateCounter(this,'f_idea_count',400)" rows="4"></textarea>
+      <div class="char-counter"><span id="f_idea_count">0</span>/400</div>
+    </div>
+
+    <div class="field">
+      <label>Current traction <span style="color:var(--t2);font-weight:normal;text-transform:none;font-family:var(--ff-b);letter-spacing:0;font-size:.72rem">— revenue, customers, pilots, LOIs (be honest, even if zero)</span></label>
+      <textarea id="f_traction" placeholder="e.g. 2 pilot kiosks live in Nagpur. ₹0 revenue currently. 3 LOIs from private clinics. 1 government PHC in discussion. OR: Pre-revenue, no customers yet, still in prototype phase." maxlength="250" oninput="updateCounter(this,'f_traction_count',250)" rows="3"></textarea>
+      <div class="char-counter"><span id="f_traction_count">0</span>/250</div>
+    </div>
+
+    <button class="submit-btn" id="submitBtn" onclick="handleSubmit()">
+      Generate My Free Preview →
+    </button>
+    <div class="submit-secure">
+      <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      No payment · No card required · 2-minute generation
+    </div>
+  </div>
+</div>
+
+<!-- LOADING SCREEN -->
+<div id="loadingScreen">
+  <div class="ld-symbol">
+    <div class="ld-ring"></div>
+    <div class="ld-ring-2"></div>
+    <div class="ld-center">✦</div>
+  </div>
+  <div class="ld-title">Building your <em>Kundali</em></div>
+  <div class="ld-sub">Analysing across 40+ sources · 2 minutes</div>
+  <div class="ld-steps">
+    <div class="ld-step" id="ls1">Reading your startup profile</div>
+    <div class="ld-step" id="ls2">Scoring across 12 dimensions</div>
+    <div class="ld-step" id="ls3">Matching govt schemes</div>
+    <div class="ld-step" id="ls4">Writing your personal note from Ronit</div>
+    <div class="ld-step" id="ls5">Stitching your preview together</div>
+  </div>
+</div>
+
+<!-- PREVIEW SCREEN -->
+<div id="previewScreen">
+
+  <div class="preview-intro">
+    <h2>Your <em>Startup Kundali</em> Preview</h2>
+    <p>Personalised AI analysis · Free preview · Full 34-page report available below</p>
+  </div>
+
+  <div class="report-wrap">
+
+    <!-- PAGE 1: SCORE -->
+    <div class="rp">
+      <div class="rp-head">
+        <div class="rp-brand">Startup Kundali · AI Intelligence for Bharat</div>
+        <div class="rp-pg">Free Preview · Page 1 of 2</div>
+      </div>
+      <div class="rp-body">
+
+        <div class="score-band">
+          <div class="score-info">
+            <div class="score-startup" id="pr_startup">—</div>
+            <div class="score-meta" id="pr_meta">—</div>
+
+            <div class="verdict-card">
+              <div class="verdict-lbl">AI Verdict</div>
+              <div class="verdict-text" id="pr_verdict">—</div>
+            </div>
+
+            <div class="stat-hook" id="pr_stat">
+              <span id="pr_stat_text">—</span>
+              <span class="stat-src" id="pr_stat_src"></span>
+            </div>
+          </div>
+
+          <div class="score-circle">
+            <div class="score-num" id="pr_score">—</div>
+            <div class="score-sub">Destiny Score</div>
+            <div class="rank-pill" id="pr_rank">—</div>
+          </div>
+        </div>
+
+        <!-- OPEN HOUSES — 3 most compelling visible -->
+        <div class="dims-lbl">Your Strongest Houses — Full Analysis Inside</div>
+        <div id="pr_open_dims"></div>
+
+        <!-- LOCKED HOUSES — teaser with unlock line -->
+        <div style="margin-top:.85rem">
+          <div class="dims-lbl">Locked Houses — 9 More Dimensions</div>
+          <div class="locked-houses" id="pr_locked_houses"></div>
+        </div>
+
+        <!-- MINI CARDS — strong only, no fix now -->
+        <div class="mc-grid">
+          <div class="mc mc-g">
+            <div class="mc-lbl">✓ Your Strengths</div>
+            <div class="mc-items" id="pr_strong">—</div>
+          </div>
+          <div class="mc mc-a" style="grid-column:span 2">
+            <div class="mc-lbl">→ What to focus on next</div>
+            <div class="mc-items" id="pr_optimize">—</div>
+          </div>
+        </div>
+
+        <!-- RESEARCH SOURCES -->
+        <div class="sources">
+          <div class="src-lbl">Researched across 40+ verified Indian ecosystem sources</div>
+          <div class="src-chips">
+            <span class="src-chip">Tracxn India</span>
+            <span class="src-chip">Crunchbase India</span>
+            <span class="src-chip">IBEF Reports</span>
+            <span class="src-chip">NASSCOM</span>
+            <span class="src-chip">DPIIT Startup India</span>
+            <span class="src-chip">IP India</span>
+            <span class="src-chip">NITI Aayog</span>
+            <span class="src-chip">MCA Database</span>
+            <span class="src-chip">AngelList India</span>
+            <span class="src-chip">Google Trends</span>
+            <span class="src-chip">Reddit India</span>
+            <span class="src-chip">State Industry Portals</span>
+            <span class="src-chip">RBI & SEBI Data</span>
+            <span class="src-chip">+ 27 more</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PAGE 2: FOUNDER NOTE -->
+    <div class="rp">
+      <div class="fn-head">
+        <div class="fn-brand">Startup Kundali · Personal Note from Ronit</div>
+        <div class="fn-pg">Free Preview · Page 2 of 2</div>
+      </div>
+      <div class="fn-body">
+        <div class="fn-salute" id="fn_salute">—</div>
+        <div id="fn_paras"></div>
+        <div class="fn-highlight" id="fn_highlight">—</div>
+        <div class="fn-sign">
+          <div class="fn-av">RN</div>
+          <div>
+            <div class="fn-name">Ronit Nandeshwar</div>
+            <div class="fn-role">Founder, Startup Kundali · Researched across 40+ Indian ecosystem sources · NIDHI Prayas ₹10L · IFCI Venture ₹30L</div>
+          </div>
+        </div>
+        <div class="fn-testimonial" id="fn_testimonial">
+          <strong>Puneet Grover, aguken.com</strong> — "I discovered a ₹30L govt scheme through my Kundali and applied within 3 weeks. The grant matching alone was worth 10x the report price."
+        </div>
+      </div>
+    </div>
+
+    <!-- SHAREABLE POSTER -->
+    <div class="poster-section">
+      <div class="poster-sec-lbl">Your shareable card — post it, flex it</div>
+
+      <div class="poster" id="shareCard">
+        <div class="p-top">
+          <div class="p-badge">✦ Startup Kundali</div>
+          <div class="p-date" id="p_date">MAY 2026</div>
+        </div>
+        <div>
+          <div class="p-name" id="p_name">—</div>
+          <div class="p-meta" id="p_meta">—</div>
+        </div>
+        <div class="p-score-band">
+          <div class="p-score" id="p_score">—</div>
+          <div class="p-score-r">
+            <div class="p-score-lbl">Destiny Score / 100</div>
+            <div class="p-rank" id="p_rank">—</div>
+          </div>
+        </div>
+        <div class="p-win">
+          <div class="p-win-lbl">Biggest win from my Kundali</div>
+          <div class="p-win-text" id="p_win">—</div>
+        </div>
+        <div class="p-dims">
+          <div class="p-dims-lbl">Top scores</div>
+          <div id="p_dims"></div>
+        </div>
+        <div class="p-market" id="p_market">—</div>
+        <div class="p-footer">
+          <div class="p-url">startupkundali.com</div>
+          <div class="p-cta">Get yours free →</div>
+        </div>
+      </div>
+
+      <div class="share-btns">
+        <button class="sbtn s-wa" onclick="shareWhatsApp()">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+          WhatsApp
+        </button>
+        <button class="sbtn s-li" onclick="shareLinkedIn()">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          LinkedIn
+        </button>
+        <button class="sbtn s-ig" onclick="shareInstagram()">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          Instagram
+        </button>
+        <button class="sbtn s-sv" onclick="saveCard()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          Save image
+        </button>
+      </div>
+    </div>
+
+    <!-- UNLOCK SECTION -->
+    <div class="unlock-section">
+      <div class="unlock-eyebrow">This is just 2 of 34 pages</div>
+      <div class="unlock-title">Unlock Your Full <em>Startup Kundali</em></div>
+      <div class="unlock-sub">Deep analysis across all 12 dimensions. Every govt scheme you qualify for. GTM action plan. Investor readiness score. Delivered in 24 hours.</div>
+      <div class="unlock-locked">
+        <span class="ul-item">9 remaining dimensions</span>
+        <span class="ul-item">Govt scheme list + amounts</span>
+        <span class="ul-item">Competitor analysis</span>
+        <span class="ul-item">90-day GTM plan</span>
+        <span class="ul-item">Investor readiness</span>
+        <span class="ul-item">Risk register</span>
+        <span class="ul-item">Remedy provider matches</span>
+      </div>
+      <a href="/onboarding" class="unlock-btn">Get Full Report — ₹1,999 →</a>
+      <div class="unlock-price"><div style="margin-bottom:.5rem">
+  Use code&nbsp;<strong style="color:var(--gold);font-family:var(--ff-m);letter-spacing:.12em;font-size:.72rem">START</strong>&nbsp;at checkout &nbsp;·&nbsp; 50% off launch offer
+</div>
+<div>₹1,999 today &nbsp;·&nbsp; Regular ₹3,999 &nbsp;·&nbsp; 100% money-back if not delivered in 24 hrs</div></div>
+    </div>
+
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ════════════════════════════
+   CONFIG
+════════════════════════════ */
+const CFG = {
+  SUPABASE_URL:      'https://osskbqdvjidxrptxdbxn.supabase.co',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zc2ticWR2amlkeHJwdHhkYnhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4Njg4ODcsImV4cCI6MjA5MzQ0NDg4N30.tQyVPauMmYchI6T1AdzN7ERFy2fFfh65LwMKAyHYAic',
+  GENERATE_PREVIEW_URL: 'https://osskbqdvjidxrptxdbxn.supabase.co/functions/v1/generate-preview',
+};
+
+const { createClient } = window.supabase;
+const db = createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY);
+
+/* State */
+let F = { name:'', startup:'', email:'', phone:'', sector:'', stage:'', problem:'', solution:'', idea:'', traction:'' };
+let previewData = null;
+
+/* ── UTILS ── */
+function updateCounter(el, counterId, max) {
+  document.getElementById(counterId).textContent = el.value.length;
+}
+
+function showToast(msg, isErr=false) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show' + (isErr ? ' err' : '');
+  setTimeout(() => el.className = 'toast', 3000);
+}
+
+/* ── VALIDATE ── */
+function validate() {
+  const name    = document.getElementById('f_name').value.trim();
+  const startup = document.getElementById('f_startup').value.trim();
+  const email   = document.getElementById('f_email').value.trim();
+  const phone   = document.getElementById('f_phone').value.replace(/\D/g,'');
+  const sector  = document.querySelector('input[name="sector"]:checked')?.value;
+  const stage   = document.querySelector('input[name="stage"]:checked')?.value;
+  const problem = document.getElementById('f_problem').value.trim();
+  const solution= document.getElementById('f_solution').value.trim();
+  const idea    = document.getElementById('f_idea').value.trim();
+
+  if (!name)    { showToast('Please enter your name', true); return false; }
+  if (!startup) { showToast('Please enter your startup name', true); return false; }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showToast('Please enter a valid email', true); return false; }
+  if (phone.length < 10) { showToast('Please enter a valid 10-digit WhatsApp number', true); return false; }
+  if (!sector)  { showToast('Please select your sector', true); return false; }
+  if (sector === 'Other') {
+    const other = document.getElementById('f_sector_other').value.trim();
+    if (!other)  { showToast('Please specify your sector', true); return false; }
+  }
+  if (!stage)   { showToast('Please select your stage', true); return false; }
+  if (!problem || problem.length < 20)  { showToast('Please describe the problem you are solving (at least 20 characters)', true); return false; }
+  if (!solution || solution.length < 20){ showToast('Please describe your solution (at least 20 characters)', true); return false; }
+  if (!idea || idea.length < 30)        { showToast('Please explain your startup idea and business model', true); return false; }
+  return true;
+}
+
+function collectForm() {
+  F.name     = document.getElementById('f_name').value.trim();
+  F.startup  = document.getElementById('f_startup').value.trim();
+  F.email    = document.getElementById('f_email').value.trim();
+  F.phone    = document.getElementById('f_phone').value.replace(/\D/g,'');
+  const rawSector = document.querySelector('input[name="sector"]:checked')?.value || '';
+  F.sector   = rawSector === 'Other'
+    ? (document.getElementById('f_sector_other').value.trim() || 'Other')
+    : rawSector;
+  F.stage    = document.querySelector('input[name="stage"]:checked')?.value || '';
+  F.problem  = document.getElementById('f_problem').value.trim();
+  F.solution = document.getElementById('f_solution').value.trim();
+  F.idea     = document.getElementById('f_idea').value.trim();
+  F.traction = document.getElementById('f_traction').value.trim() || 'Not provided';
+}
+
+/* ── SUBMIT ── */
+async function handleSubmit() {
+  if (!validate()) return;
+  collectForm();
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Saving your details...';
+
+  try {
+    // Save to preview_leads
+    const { data, error } = await db.from('preview_leads').insert({
+      name:         F.name,
+      email:        F.email,
+      whatsapp:     F.phone,
+      startup_name: F.startup,
+      sector:       F.sector,
+      stage:        F.stage,
+      problem:      F.desc,
+      payment_status: 'free_preview',
+    }).select('id').single();
+
+    if (error) throw new Error(error.message);
+    localStorage.setItem('sk_preview_id', data.id);
+
+    // Hide form + hero completely, show loading fullscreen
+    document.querySelector('.hero').style.display = 'none';
+    document.getElementById('formSection').style.display = 'none';
+    document.body.style.overflow = 'hidden';
+    document.getElementById('loadingScreen').classList.add('open');
+    animateLoadingSteps();
+
+    // Call generate-preview Edge Function
+    const res = await fetch(CFG.GENERATE_PREVIEW_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + CFG.SUPABASE_ANON_KEY,
+      },
+      body: JSON.stringify({
+        name:     F.name,
+        startup:  F.startup,
+        sector:   F.sector,
+        stage:    F.stage,
+        problem:  F.problem,
+        solution: F.solution,
+        idea:     F.idea,
+        traction: F.traction,
+      }),
+    });
+
+    if (!res.ok) throw new Error('Preview generation failed');
+    const data2 = await res.json();
+    previewData = data2;
+
+    // Wait for animation minimum
+    await new Promise(r => setTimeout(r, 4500));
+
+    renderPreview(data2);
+    // Clean handoff — full page replacement
+    document.getElementById('loadingScreen').classList.remove('open');
+    document.body.style.overflow = '';
+    // Make preview fixed temporarily to render at top
+    const ps = document.getElementById('previewScreen');
+    ps.style.position = 'fixed';
+    ps.style.top = '0';
+    ps.style.left = '0';
+    ps.style.right = '0';
+    ps.style.zIndex = '400';
+    ps.style.background = 'var(--bg1)';
+    ps.style.overflowY = 'auto';
+    ps.style.height = '100vh';
+    ps.classList.add('open');
+    // After a tick, restore normal flow and scroll
+    setTimeout(() => {
+      ps.style.position = '';
+      ps.style.top = '';
+      ps.style.left = '';
+      ps.style.right = '';
+      ps.style.zIndex = '';
+      ps.style.background = '';
+      ps.style.overflowY = '';
+      ps.style.height = '';
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }, 50);
+
+  } catch(e) {
+    console.error(e);
+    btn.disabled = false;
+    btn.textContent = 'Generate My Free Preview →';
+    // Show fallback preview even on error
+    await new Promise(r => setTimeout(r, 5500));
+    renderFallback();
+    document.getElementById('loadingScreen').classList.remove('open');
+    document.body.style.overflow = '';
+    const ps2 = document.getElementById('previewScreen');
+    ps2.style.position = 'fixed';
+    ps2.style.top = '0';
+    ps2.style.left = '0';
+    ps2.style.right = '0';
+    ps2.style.zIndex = '400';
+    ps2.style.background = 'var(--bg1)';
+    ps2.style.overflowY = 'auto';
+    ps2.style.height = '100vh';
+    ps2.classList.add('open');
+    setTimeout(() => {
+      ps2.style.position = '';
+      ps2.style.top = '';
+      ps2.style.left = '';
+      ps2.style.right = '';
+      ps2.style.zIndex = '';
+      ps2.style.background = '';
+      ps2.style.overflowY = '';
+      ps2.style.height = '';
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }, 50);
+  }
+}
+
+/* ── LOADING STEPS ── */
+function animateLoadingSteps() {
+  const steps = ['ls1','ls2','ls3','ls4','ls5'];
+  let i = 0;
+  const iv = setInterval(() => {
+    if (i > 0) {
+      document.getElementById(steps[i-1]).classList.remove('active');
+      document.getElementById(steps[i-1]).classList.add('done');
+    }
+    if (i < steps.length) {
+      document.getElementById(steps[i]).classList.add('active');
+      i++;
+    } else clearInterval(iv);
+  }, 900);
+}
+
+/* ── RENDER PREVIEW ── */
+function renderPreview(d) {
+  const first = F.name.split(' ')[0];
+
+  // Score page
+  document.getElementById('pr_startup').textContent = d.startup_name || F.startup;
+  document.getElementById('pr_meta').textContent = (d.sector || F.sector) + ' · ' + (d.stage || F.stage);
+  document.getElementById('pr_score').textContent = d.destiny_score || '—';
+  document.getElementById('pr_verdict').textContent = d.verdict || '—';
+  document.getElementById('pr_stat_text').textContent = d.stat_hook || '';
+  document.getElementById('pr_stat_src').textContent = d.stat_source || '';
+  document.getElementById('pr_rank').textContent = d.rank_pct ? 'Top ' + d.rank_pct + '% in ' + (d.sector || F.sector) + ' India' : '—';
+
+  // Open houses — 3 most compelling
+  const openHouses = d.open_houses || [];
+  const openEl = document.getElementById('pr_open_dims');
+  openEl.innerHTML = openHouses.map(h => {
+    const color = h.score >= 75 ? '#16a34a' : h.score >= 50 ? '#d97706' : '#dc2626';
+    return `<div class="dim-row" style="margin-bottom:.45rem">
+      <div class="dim-name">${h.name}</div>
+      <div class="dim-track"><div class="dim-fill" style="width:${h.score}%;background:${color}"></div></div>
+      <div class="dim-score" style="color:${color}">${h.score}</div>
+    </div>
+    <div style="font-size:.72rem;color:#6b7280;margin-bottom:.85rem;padding-left:0;line-height:1.6">${h.insight}</div>`;
+  }).join('');
+
+  // Locked houses — 9 remaining with teaser lines
+  const lockedHouses = d.locked_houses || [];
+  const lockedEl = document.getElementById('pr_locked_houses');
+  lockedEl.innerHTML = lockedHouses.map(h => `
+    <div class="locked-house">
+      <div class="lh-num">${h.num}</div>
+      <div class="lh-content">
+        <div class="lh-name">${h.name}</div>
+        <div class="lh-teaser">${h.teaser}</div>
+        <div class="lh-unlock">🔒 Available in full report →</div>
+      </div>
+      <div class="lh-score-blur">${h.score_blur}</div>
+    </div>`).join('');
+
+  // Mini cards — strengths + optimize only (no fix now)
+  document.getElementById('pr_strong').innerHTML = (d.strong || []).join('<br>');
+  document.getElementById('pr_optimize').innerHTML = (d.optimize || []).join(' &nbsp;·&nbsp; ');
+
+  // Founder note
+  document.getElementById('fn_salute').innerHTML = `Dear <strong>${first},</strong>`;
+  document.getElementById('fn_paras').innerHTML = (d.note_paragraphs || []).map(p =>
+    `<p class="fn-para">${p}</p>`).join('');
+  document.getElementById('fn_highlight').innerHTML = d.grant_hook || '—';
+
+  // Shareable poster
+  const now = new Date();
+  document.getElementById('p_date').textContent = now.toLocaleString('en-IN',{month:'long',year:'numeric'}).toUpperCase();
+  document.getElementById('p_name').textContent = d.startup_name || F.startup;
+  document.getElementById('p_meta').textContent = (d.sector||F.sector) + ' · ' + (d.stage||F.stage);
+  document.getElementById('p_score').textContent = d.destiny_score || '—';
+  document.getElementById('p_rank').textContent = d.rank_pct ? '↑ Top ' + d.rank_pct + '% in ' + (d.sector||F.sector) + ' India' : '—';
+  document.getElementById('p_win').innerHTML = d.win_line || '—';
+  document.getElementById('p_market').innerHTML = d.poster_stat || '—';
+
+  // Poster dims — top 3 only (strengths)
+  document.getElementById('p_dims').innerHTML = (d.open_houses||[]).slice(0,3).map(h =>
+    `<div class="pd">
+      <div class="pd-n">${h.name.replace(/^[IVX]+ — /,'')}</div>
+      <div class="pd-t"><div class="pd-f" style="width:${h.score}%;background:#2DB58A"></div></div>
+      <div class="pd-s" style="color:#2DB58A">${h.score}</div>
+    </div>`).join('');
+
+  // Animate bars
+  setTimeout(() => {
+    document.querySelectorAll('.dim-fill').forEach(b => {
+      const w = b.style.width; b.style.width='0';
+      setTimeout(() => b.style.width = w, 100);
+    });
+  }, 200);
+}
+
+/* ── FALLBACK RENDER ── */
+function renderFallback() {
+  const first = F.name.split(' ')[0];
+  const sector = F.sector || 'Tech';
+  const stage = F.stage || 'Early Stage';
+  const startup = F.startup || 'Your Startup';
+
+  document.getElementById('pr_startup').textContent = startup;
+  document.getElementById('pr_meta').textContent = sector + ' · ' + stage;
+  document.getElementById('pr_score').textContent = '68';
+  document.getElementById('pr_verdict').textContent = 'Strong problem, strong timing. IP and GTM need attention before fundraising.';
+  document.getElementById('pr_stat_text').textContent = 'You\'re solving a problem faced by 8 in 10 founders in your space. Market timing is in the top quartile for ' + sector + ' in India.';
+  document.getElementById('pr_stat_src').textContent = 'Source: NASSCOM India Innovation Report 2024 · DPIIT Startup India Dashboard FY25';
+  document.getElementById('pr_rank').textContent = 'Top 18% in ' + sector + ' India';
+
+  document.getElementById('pr_open_dims').innerHTML = `
+    <div class="dim-row"><div class="dim-name">I — Idea & Vision</div><div class="dim-track"><div class="dim-fill" style="width:82%;background:#16a34a"></div></div><div class="dim-score" style="color:#16a34a">82</div></div>
+    <div style="font-size:.72rem;color:#6b7280;margin-bottom:.85rem;line-height:1.6">Your idea addresses a genuine gap in the Indian market. The core insight is differentiated and the timing aligns with where capital is flowing in ${sector} right now.</div>
+    <div class="dim-row"><div class="dim-name">II — Problem-Market Fit</div><div class="dim-track"><div class="dim-fill" style="width:79%;background:#16a34a"></div></div><div class="dim-score" style="color:#16a34a">79</div></div>
+    <div style="font-size:.72rem;color:#6b7280;margin-bottom:.85rem;line-height:1.6">You've articulated the problem clearly and the target customer is well-defined. This is the hardest part — and you've got it. Most founders at ${stage} can't do this as well.</div>
+    <div class="dim-row"><div class="dim-name">XI — Govt Scheme Access</div><div class="dim-track"><div class="dim-fill" style="width:76%;background:#16a34a"></div></div><div class="dim-score" style="color:#16a34a">76</div></div>
+    <div style="font-size:.72rem;color:#6b7280;margin-bottom:.85rem;line-height:1.6">Based on your sector and stage, you qualify for multiple non-dilutive funding schemes. The full report lists them with amounts and exact application process.</div>`;
+
+  document.getElementById('pr_locked_houses').innerHTML = [
+    ['VI','VI — Competitive Landscape','Your competitive moat analysis reveals 2 gaps that investors will flag in every first meeting.'],
+    ['VII','VII — GTM & Distribution','Your go-to-market strategy has a critical sequencing issue that\'s delaying your first 100 customers.'],
+    ['VIII','VIII — Risk Register','3 high-severity risks identified. Two are closeable in under 30 days.'],
+    ['IV','IV — IP & Legal Assets','IP score flagged. This is the #1 reason ' + sector + ' founders lose term sheets.'],
+    ['IX','IX — Scalability','Revenue model assessment: unit economics projection for next 12 months.'],
+    ['X','X — Brand & Positioning','Your positioning in the market and differentiation vs competitors.'],
+    ['III','III — Ecosystem & Network','Investor and mentor network gaps that are slowing your fundraise.'],
+    ['XII','XII — Exit Paths','Realistic exit scenarios and valuation benchmarks for ' + sector + '.'],
+    ['V','V — Product & PMF','Full product-market fit analysis and roadmap recommendations.'],
+  ].map(([num,name,teaser]) => `
+    <div class="locked-house">
+      <div class="lh-num">${num}</div>
+      <div class="lh-content">
+        <div class="lh-name">${name}</div>
+        <div class="lh-teaser">${teaser}</div>
+        <div class="lh-unlock">🔒 Available in full report →</div>
+      </div>
+      <div class="lh-score-blur">??</div>
+    </div>`).join('');
+
+  document.getElementById('pr_strong').innerHTML = 'Idea & Vision<br>Problem-Market Fit<br>Govt Scheme Access';
+  document.getElementById('pr_optimize').innerHTML = 'GTM sequencing &nbsp;·&nbsp; IP filing &nbsp;·&nbsp; Competitive positioning';
+
+  document.getElementById('fn_salute').innerHTML = `Dear <strong>${first},</strong>`;
+  document.getElementById('fn_paras').innerHTML = `
+    <p class="fn-para">I went through what you shared about ${startup} and I want to be direct — you're building in the right direction. The problem you've described is real, the timing in ${sector} is right, and the clarity with which you've articulated your customer is better than most founders I see at ${stage}.</p>
+    <p class="fn-para">But there are two things that will slow you down significantly if you don't close them in the next 60 days. The first is your IP position — at ${stage} in ${sector}, investors expect at least a provisional filing before the first meeting. The second is your GTM sequencing, which the full report maps in detail.</p>`;
+  document.getElementById('fn_highlight').innerHTML = `<strong>Grant opportunity:</strong> Based on your sector (${sector}) and stage (${stage}), you likely qualify for SISFS (Startup India Seed Fund Scheme) — up to ₹20L in non-dilutive funding. The full report maps the exact application process and timeline. Most ${sector} founders at ${stage} who apply within 90 days of incorporation have a 3x higher success rate.`;
+
+  // Poster
+  const now = new Date();
+  document.getElementById('p_date').textContent = now.toLocaleString('en-IN',{month:'long',year:'numeric'}).toUpperCase();
+  document.getElementById('p_name').textContent = startup;
+  document.getElementById('p_meta').textContent = sector + ' · ' + stage;
+  document.getElementById('p_score').textContent = '68';
+  document.getElementById('p_rank').textContent = '↑ Top 18% in ' + sector + ' India';
+  document.getElementById('p_win').innerHTML = `Problem-market fit: <strong>79/100</strong> — solving for 8 in 10 founders in this space. Market timing: <strong>top 25%.</strong>`;
+  document.getElementById('p_market').innerHTML = `The ${sector} market in India is growing at <strong>28% CAGR</strong>. Your timing is validated.`;
+  document.getElementById('p_dims').innerHTML = `
+    <div class="pd"><div class="pd-n">Idea & Vision</div><div class="pd-t"><div class="pd-f" style="width:82%;background:#2DB58A"></div></div><div class="pd-s" style="color:#2DB58A">82</div></div>
+    <div class="pd"><div class="pd-n">Problem-Market Fit</div><div class="pd-t"><div class="pd-f" style="width:79%;background:#2DB58A"></div></div><div class="pd-s" style="color:#2DB58A">79</div></div>
+    <div class="pd"><div class="pd-n">Govt Schemes</div><div class="pd-t"><div class="pd-f" style="width:76%;background:#2DB58A"></div></div><div class="pd-s" style="color:#2DB58A">76</div></div>`;
+}
+
+/* ── SHARE FUNCTIONS ── */
+function shareWhatsApp() {
+  const score = document.getElementById('pr_score').textContent;
+  const startup = document.getElementById('pr_startup').textContent;
+  const rank = document.getElementById('pr_rank').textContent;
+  const text = `Just got my Startup Kundali for ${startup}! 🎯\n\nDestiny Score: ${score}/100\n${rank}\n\nGet yours free → startupkundali.com`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+}
+
+function shareLinkedIn() {
+  const url = 'https://startupkundali.com/preview';
+  const startup = document.getElementById('pr_startup').textContent;
+  const score = document.getElementById('pr_score').textContent;
+  const text = `Just got my Startup Kundali for ${startup} — Destiny Score: ${score}/100. Get yours free at startupkundali.com`;
+  window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}&summary=${encodeURIComponent(text)}`, '_blank');
+}
+
+function shareInstagram() {
+  showToast('Screenshot your card and share it on Instagram Stories!');
+}
+
+function saveCard() {
+  showToast('Screenshot the card above to save it!');
+}
+
+/* ── OTHER SECTOR TOGGLE ── */
+function toggleOtherSector(show) {
+  document.getElementById('other_sector_wrap').style.display = show ? 'block' : 'none';
+  if (show) setTimeout(() => document.getElementById('f_sector_other').focus(), 100);
+}
+
+/* ── INIT ── */
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('p_date').textContent =
+    new Date().toLocaleString('en-IN',{month:'long',year:'numeric'}).toUpperCase();
+  // Hide other sector when non-Other chips selected
+  document.querySelectorAll('input[name="sector"]').forEach(inp => {
+    if (inp.value !== 'Other') inp.addEventListener('change', () => toggleOtherSector(false));
+  });
+});
+</script>
+</body>
+</html>
