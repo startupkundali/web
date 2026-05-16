@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mr. Owl — AI Intelligence Layer · Startup Kundali</title>
+<meta name="description" content="The intelligence layer behind Startup Kundali. Tracks growth, competitors, grants, and hidden startup risks — continuously.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,200;0,300;0,600;0,700;1,200;1,300;1,600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --void:#03040A;
+  --deep:#060810;
+  --gold:#C9A84C;
+  --gold-lt:rgba(201,168,76,.12);
+  --green:#2DB58A;
+  --red:#D94040;
+  --amber:#D4902A;
+  --blue:#4A90D9;
+  --t1:#E8E4DA;
+  --t2:rgba(232,228,218,.35);
+  --t3:rgba(232,228,218,.55);
+  --mono:'DM Mono',monospace;
+  --serif:'Cormorant Garamond',serif;
+}
+html{font-size:16px;scroll-behavior:smooth;background:var(--void)}
+body{color:var(--t1);font-family:var(--mono);overflow-x:hidden;cursor:default}
+::selection{background:rgba(201,168,76,.15)}
+::-webkit-scrollbar{width:2px}
+::-webkit-scrollbar-thumb{background:rgba(201,168,76,.18)}
+
+/* Grain */
+body::before{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;
+  background:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.025'/%3E%3C/svg%3E");
+  background-size:200px;opacity:.45}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:800;
+  padding:.9rem 3rem;display:flex;justify-content:space-between;align-items:center;
+  background:rgba(3,4,10,.85);backdrop-filter:blur(24px)}
+.nav-l{display:flex;align-items:center;gap:.85rem}
+.nav-sk{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--t2);text-decoration:none}
+.nav-sep{width:1px;height:12px;background:rgba(201,168,76,.25)}
+.nav-owl{font-family:var(--serif);font-size:.9rem;font-weight:600;color:var(--gold);letter-spacing:.05em}
+.nav-r{display:flex;align-items:center;gap:1.8rem}
+.nav-link{font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;color:var(--t2);
+  text-decoration:none;transition:color .2s}
+.nav-link:hover{color:var(--gold)}
+.nav-ea{font-size:.55rem;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--gold);border:1px solid rgba(201,168,76,.3);border-radius:2px;
+  padding:.38rem .9rem;text-decoration:none;transition:all .2s}
+.nav-ea:hover{background:rgba(201,168,76,.07)}
+@media(max-width:640px){nav{padding:.8rem 1.25rem}.nav-link{display:none}}
+
+/* ── HERO ── */
+#hero{position:relative;height:100dvh;display:flex;flex-direction:column;
+  justify-content:flex-end;overflow:hidden}
+
+/* Full-bleed eye canvas */
+#eyeCanvas{position:absolute;inset:0;width:100%;height:100%}
+
+/* Hero text — bottom left */
+.hero-text{position:relative;z-index:10;padding:0 3rem 3.5rem;max-width:760px}
+@media(max-width:640px){.hero-text{padding:0 1.5rem 2.5rem}}
+
+.hero-pill{display:inline-flex;align-items:center;gap:.55rem;
+  font-size:.52rem;letter-spacing:.2em;text-transform:uppercase;color:var(--green);
+  margin-bottom:1.8rem;opacity:0;animation:up .8s .1s forwards}
+.hero-pill-dot{width:5px;height:5px;border-radius:50%;background:var(--green);
+  animation:dpulse 2.5s ease-in-out infinite}
+@keyframes dpulse{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:1;transform:scale(1.8)}}
+
+.hero-h1{font-family:var(--serif);font-size:clamp(3.2rem,7vw,7rem);font-weight:200;
+  line-height:1;letter-spacing:-.02em;color:#fff;
+  opacity:0;animation:up .9s .18s forwards}
+.hero-h1 em{font-style:italic;color:var(--gold);font-weight:200}
+.hero-h1 strong{font-weight:700;display:block}
+
+.hero-sub{font-size:.72rem;color:var(--t3);line-height:1.9;
+  max-width:440px;margin:1.6rem 0 2rem;letter-spacing:.03em;
+  opacity:0;animation:up .9s .3s forwards}
+
+.hero-ctas{display:flex;gap:.75rem;align-items:center;
+  opacity:0;animation:up .9s .44s forwards}
+.hcta-p{background:var(--gold);color:#000;padding:.75rem 1.7rem;
+  font-family:var(--mono);font-size:.6rem;font-weight:500;letter-spacing:.1em;
+  text-transform:uppercase;border:none;border-radius:2px;cursor:pointer;
+  text-decoration:none;display:inline-block;transition:all .2s}
+.hcta-p:hover{background:#E8C96A}
+.hcta-s{font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--t2);text-decoration:none;transition:color .2s;
+  display:flex;align-items:center;gap:.45rem}
+.hcta-s::after{content:'↓';font-size:.7rem;transition:transform .3s}
+.hcta-s:hover{color:var(--gold)}
+.hcta-s:hover::after{transform:translateY(3px)}
+
+@keyframes up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* Scroll indicator */
+.scroll-ind{position:absolute;bottom:2rem;right:3rem;z-index:10;
+  display:flex;flex-direction:column;align-items:center;gap:.4rem;
+  opacity:0;animation:up .8s .8s forwards}
+.si-line{width:1px;height:40px;background:linear-gradient(to bottom,transparent,rgba(201,168,76,.4))}
+.si-dot{width:4px;height:4px;border-radius:50%;background:var(--gold);opacity:.6;
+  animation:bounce 2s ease-in-out infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+
+/* ── FLOATING SIGNAL TICKER — horizontal strip ── */
+.ticker{position:fixed;bottom:0;left:0;right:0;z-index:700;
+  background:rgba(3,4,10,.9);border-top:1px solid rgba(201,168,76,.1);
+  backdrop-filter:blur(16px);overflow:hidden;height:36px;
+  display:flex;align-items:center}
+.ticker-track{display:flex;gap:0;animation:tickerMove 40s linear infinite;white-space:nowrap}
+.ticker-item{display:inline-flex;align-items:center;gap:.55rem;
+  padding:0 2.5rem;border-right:1px solid rgba(255,255,255,.04)}
+.ti-icon{font-size:.7rem;flex-shrink:0}
+.ti-text{font-size:.58rem;letter-spacing:.04em;color:var(--t3)}
+.ti-text strong{font-weight:500}
+.ti-up strong{color:var(--green)}
+.ti-down strong{color:var(--red)}
+.ti-gold strong{color:var(--gold)}
+.ti-blue strong{color:var(--blue)}
+@keyframes tickerMove{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* ── SECTIONS — no boxes, full flow ── */
+.chapter{padding:8rem 3rem;position:relative}
+@media(max-width:640px){.chapter{padding:5rem 1.5rem}}
+
+/* Gold top rule */
+.chapter-rule{width:48px;height:1px;background:var(--gold);opacity:.45;margin-bottom:1.8rem}
+
+.chapter-eyebrow{font-size:.52rem;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--gold);opacity:.65;margin-bottom:1rem}
+
+.chapter-h{font-family:var(--serif);font-weight:200;line-height:1.04;
+  letter-spacing:-.015em;color:#fff}
+
+/* ── STAGGER REVEAL ── */
+.reveal{opacity:0;transform:translateY(32px);transition:opacity .9s cubic-bezier(.25,.46,.45,.94),transform .9s cubic-bezier(.25,.46,.45,.94)}
+.reveal.on{opacity:1;transform:none}
+.reveal[data-d="1"]{transition-delay:.1s}
+.reveal[data-d="2"]{transition-delay:.22s}
+.reveal[data-d="3"]{transition-delay:.36s}
+.reveal[data-d="4"]{transition-delay:.5s}
+
+/* ── CHAPTER 1: THE EYE ── */
+/* (hero) */
+
+/* ── CHAPTER 2: WHAT ── */
+#what{background:var(--deep)}
+.what-split{display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:center}
+@media(max-width:820px){.what-split{grid-template-columns:1fr;gap:3rem}}
+
+.what-h{font-family:var(--serif);font-size:clamp(2.5rem,5vw,5rem);font-weight:200;
+  line-height:1.04;color:#fff;letter-spacing:-.02em;margin-bottom:1.4rem}
+.what-h em{font-style:italic;color:var(--gold)}
+
+.what-body{font-size:.82rem;color:var(--t3);line-height:2;letter-spacing:.02em;margin-bottom:2rem}
+
+.what-attrs{display:flex;flex-direction:column;gap:.85rem}
+.wa{display:flex;align-items:flex-start;gap:.85rem}
+.wa-line{width:14px;height:1px;background:rgba(201,168,76,.4);flex-shrink:0;margin-top:.55rem}
+.wa-text{font-size:.78rem;color:var(--t3);line-height:1.8;letter-spacing:.02em}
+.wa-text strong{color:var(--t1);font-weight:500;display:block;font-size:.8rem;margin-bottom:.18rem}
+
+/* Orbital SVG right side */
+.orbital-wrap{position:relative;display:flex;align-items:center;justify-content:center}
+#orbCanvas{display:block;width:100%;max-width:380px;height:380px;margin:0 auto}
+
+/* ── CHAPTER 3: SIGNALS ── (no cards — horizontal lines) ── */
+#signals{border-top:1px solid rgba(201,168,76,.08)}
+.signals-intro{max-width:600px;margin-bottom:4rem}
+.sig-h{font-family:var(--serif);font-size:clamp(2.2rem,4.5vw,4.2rem);font-weight:200;
+  line-height:1.06;color:#fff;letter-spacing:-.015em}
+.sig-h em{color:var(--gold);font-style:italic}
+
+.signal-list{display:flex;flex-direction:column;gap:0}
+.signal-row{display:grid;grid-template-columns:1.4rem 200px 1fr;gap:1.8rem;align-items:baseline;
+  padding:1.4rem 0;border-bottom:1px solid rgba(255,255,255,.05);
+  transition:border-color .25s}
+.signal-row:hover{border-color:rgba(201,168,76,.18)}
+.signal-row:last-child{border-bottom:none}
+.sr-num{font-size:.52rem;letter-spacing:.12em;color:rgba(201,168,76,.35)}
+.sr-name{font-size:.78rem;font-weight:500;color:var(--t1);letter-spacing:.05em;text-transform:uppercase}
+.sr-desc{font-size:.74rem;color:var(--t3);line-height:1.75;letter-spacing:.02em}
+.sr-tags{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.55rem}
+.sr-tag{font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--gold);border:1px solid rgba(201,168,76,.18);
+  border-radius:1px;padding:.15rem .42rem;opacity:.7}
+@media(max-width:640px){.signal-row{grid-template-columns:1fr;gap:.4rem}
+  .sr-num{display:none}.sr-name{font-size:.72rem}}
+
+/* ── CHAPTER 4: FEED ── (the centrepiece) ── */
+#feed{background:#000;border-top:1px solid rgba(201,168,76,.1);
+  border-bottom:1px solid rgba(201,168,76,.1)}
+
+.feed-bg{position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 70% 40% at 50% 0%,rgba(201,168,76,.04),transparent)}
+
+.feed-chapter{position:relative;z-index:1;padding:8rem 3rem}
+@media(max-width:640px){.feed-chapter{padding:5rem 1.5rem}}
+
+.feed-h{font-family:var(--serif);font-size:clamp(2.8rem,6vw,6rem);font-weight:200;
+  line-height:1;color:#fff;letter-spacing:-.02em;text-align:center;margin-bottom:3.5rem}
+.feed-h em{font-style:italic;color:var(--gold)}
+
+/* Terminal */
+.terminal{max-width:800px;margin:0 auto;font-family:var(--mono)}
+.term-bar{display:flex;align-items:center;gap:.55rem;padding:.7rem 1.1rem;
+  background:rgba(201,168,76,.04);
+  border:1px solid rgba(201,168,76,.14);border-bottom:none;border-radius:4px 4px 0 0}
+.term-dot{width:9px;height:9px;border-radius:50%}
+.td1{background:#FF5F57}.td2{background:#FEBC2E}.td3{background:#28C840}
+.term-title{font-size:.5rem;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(201,168,76,.35);margin-left:auto}
+.term-body{background:rgba(4,5,12,.98);border:1px solid rgba(201,168,76,.14);
+  border-radius:0 0 4px 4px;padding:1.8rem 2rem;min-height:360px;position:relative;overflow:hidden}
+
+/* Horizontal scan line */
+.term-scan{position:absolute;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent 0%,rgba(201,168,76,.5) 50%,transparent 100%);
+  animation:scan 5s linear infinite;z-index:0;top:0}
+@keyframes scan{0%{top:0;opacity:.8}98%{opacity:0}100%{top:100%;opacity:0}}
+
+.feed-entry{display:grid;grid-template-columns:58px 1.2rem 1fr;gap:.75rem;
+  padding:.95rem 0;border-bottom:1px solid rgba(255,255,255,.04);
+  position:relative;z-index:1;align-items:start;
+  opacity:0;transform:translateX(-6px);animation:feedSlide .5s ease forwards}
+.feed-entry:last-of-type{border-bottom:none}
+@keyframes feedSlide{to{opacity:1;transform:none}}
+
+.fe-time{font-size:.5rem;letter-spacing:.06em;color:rgba(201,168,76,.28);
+  padding-top:.18rem;white-space:nowrap}
+.fe-icon{font-size:.78rem;padding-top:.1rem;text-align:center}
+.fe-body{font-size:.7rem;line-height:1.75;letter-spacing:.025em}
+.fe-body strong{font-weight:500;display:block;margin-bottom:.15rem;font-size:.72rem}
+.fe-body .note{font-size:.6rem;color:rgba(201,168,76,.45);margin-top:.2rem;display:block}
+
+/* Signal colours */
+.fe-alert .fe-body strong{color:var(--red)}
+.fe-up .fe-body strong{color:var(--green)}
+.fe-grant .fe-body strong{color:var(--gold)}
+.fe-intel .fe-body strong{color:var(--blue)}
+.fe-warn .fe-body strong{color:var(--amber)}
+
+.cursor{display:inline-block;width:7px;height:14px;background:var(--gold);
+  opacity:.8;animation:blink .9s step-end infinite;vertical-align:middle}
+@keyframes blink{0%,100%{opacity:.8}50%{opacity:0}}
+
+/* ── CHAPTER 5: COMPARISON ── */
+#versus{background:var(--deep)}
+.vs-intro{max-width:520px;margin-bottom:4rem}
+.vs-h{font-family:var(--serif);font-size:clamp(2.2rem,4vw,4rem);font-weight:200;
+  line-height:1.05;color:#fff;letter-spacing:-.015em}
+.vs-h em{color:var(--gold);font-style:italic}
+
+/* Table — clean, no boxes */
+.vs-table{width:100%;border-collapse:collapse}
+.vs-table thead th{font-size:.52rem;letter-spacing:.2em;text-transform:uppercase;
+  padding:.6rem 0 1.1rem;text-align:left;border-bottom:1px solid rgba(201,168,76,.2)}
+.vs-table thead th:first-child{color:rgba(255,255,255,.25);width:45%}
+.vs-table thead th:last-child{color:var(--gold)}
+.vs-table tbody td{padding:1rem 0;border-bottom:1px solid rgba(255,255,255,.04);
+  font-size:.78rem;line-height:1.7;vertical-align:top}
+.vs-table tbody td:first-child{color:rgba(255,255,255,.28);padding-right:2rem}
+.vs-table tbody td:last-child{color:var(--t1)}
+.td-check::before{content:'✓ ';color:var(--green);font-size:.72rem}
+.vs-table tbody tr:hover td{background:rgba(201,168,76,.02)}
+
+/* ── CHAPTER 6: VISION ── */
+#vision{position:relative;overflow:hidden}
+#vCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+.vision-inner{position:relative;z-index:1;text-align:center;
+  padding:10rem 2rem;max-width:680px;margin:0 auto}
+.vision-h{font-family:var(--serif);font-size:clamp(2.5rem,5vw,5.5rem);font-weight:200;
+  line-height:1.05;color:#fff;letter-spacing:-.02em;margin-bottom:1.2rem}
+.vision-h em{color:var(--gold);font-style:italic}
+.vision-body{font-size:.82rem;color:var(--t3);line-height:2;letter-spacing:.03em;margin-bottom:.4rem}
+.vision-accent{font-family:var(--serif);font-size:1.4rem;font-style:italic;
+  color:var(--gold);font-weight:300;margin-top:.8rem}
+
+/* ── CHAPTER 7: EARLY ACCESS ── */
+#ea{border-top:1px solid rgba(201,168,76,.1)}
+.ea-wrap{max-width:560px;margin:0 auto;text-align:center}
+.ea-num{font-family:var(--serif);font-size:clamp(5rem,12vw,11rem);font-weight:200;
+  color:var(--gold);opacity:.07;line-height:1;
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  pointer-events:none;white-space:nowrap;letter-spacing:-.04em}
+.ea-h{font-family:var(--serif);font-size:clamp(2rem,4vw,3.8rem);font-weight:200;
+  color:#fff;line-height:1.06;letter-spacing:-.015em;margin-bottom:.8rem}
+.ea-h em{color:var(--gold);font-style:italic}
+.ea-sub{font-size:.75rem;color:var(--t3);line-height:1.9;letter-spacing:.03em;margin-bottom:2rem}
+
+.ea-form{display:flex;gap:.5rem;max-width:400px;margin:0 auto 1rem;flex-wrap:wrap}
+.ea-input{flex:1;min-width:180px;background:rgba(6,8,16,.95);
+  border:1px solid rgba(201,168,76,.28);color:#fff;
+  font-family:var(--mono);font-size:.72rem;padding:.8rem 1rem;
+  border-radius:2px;outline:none;caret-color:var(--gold);letter-spacing:.03em;
+  transition:border-color .2s}
+.ea-input:focus{border-color:var(--gold)}
+.ea-input::placeholder{color:rgba(232,228,218,.25)}
+.ea-btn{background:var(--gold);color:#000;padding:.8rem 1.4rem;border:none;
+  border-radius:2px;font-family:var(--mono);font-size:.62rem;font-weight:500;
+  letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
+  transition:background .18s,transform .15s;white-space:nowrap}
+.ea-btn:hover{background:#E8C96A;transform:translateY(-1px)}
+.ea-note{font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;color:var(--t2)}
+
+/* ── FOOTER ── */
+footer{background:var(--deep);border-top:1px solid rgba(201,168,76,.08);
+  padding:2rem 3rem;display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:1rem}
+@media(max-width:640px){footer{padding:1.5rem;flex-direction:column;text-align:center}}
+.ft-brand{font-family:var(--serif);font-size:.88rem;font-weight:600;color:var(--gold);text-decoration:none}
+.ft-links{display:flex;gap:2rem;flex-wrap:wrap}
+.ft-links a{font-size:.52rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--t2);text-decoration:none;transition:color .2s}
+.ft-links a:hover{color:var(--gold)}
+.ft-copy{font-size:.5rem;letter-spacing:.08em;color:rgba(232,228,218,.2)}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:3rem;left:50%;
+  transform:translateX(-50%) translateY(50px);z-index:9000;
+  background:rgba(6,8,16,.96);border:1px solid rgba(201,168,76,.3);
+  border-radius:40px;padding:.55rem 1.2rem;font-size:.6rem;
+  letter-spacing:.06em;color:#fff;white-space:nowrap;
+  transition:transform .3s cubic-bezier(.34,1.2,.64,1);pointer-events:none}
+#toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ── PARALLAX LARGE TEXT ── */
+.parallax-text{font-family:var(--serif);font-size:clamp(6rem,15vw,16rem);
+  font-weight:200;color:rgba(201,168,76,.04);letter-spacing:-.04em;
+  line-height:1;white-space:nowrap;overflow:hidden;pointer-events:none;
+  user-select:none;display:block;will-change:transform}
+
+/* ── HORIZONTAL RULE ── */
+.hr{height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,.2),transparent);
+  margin:0 3rem}
+</style>
+</head>
+<body>
+
+<div id="toast"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-l">
+    <a class="nav-sk" href="/">Startup Kundali</a>
+    <span class="nav-sep"></span>
+    <span class="nav-owl">Mr. Owl</span>
+  </div>
+  <div class="nav-r">
+    <a class="nav-link" href="#signals">Capabilities</a>
+    <a class="nav-link" href="#versus">vs ChatGPT</a>
+    <a class="nav-ea" href="#ea">Join Early Access</a>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<div id="hero">
+  <canvas id="eyeCanvas"></canvas>
+
+  <div class="hero-text">
+    <div class="hero-pill">
+      <span class="hero-pill-dot"></span>
+      AI Intelligence Layer &nbsp;·&nbsp; Coming Soon
+    </div>
+    <h1 class="hero-h1">
+      Your startup<br>
+      never sleeps.<br>
+      <em>Neither does</em><br>
+      <strong>Mr. Owl.</strong>
+    </h1>
+    <p class="hero-sub">The intelligence layer behind Startup Kundali — tracking competitors, grants, GTM shifts, and hidden risks. Continuously.</p>
+    <div class="hero-ctas">
+      <a href="#ea" class="hcta-p">Join Early Access</a>
+      <a href="#signals" class="hcta-s">See what Mr. Owl watches</a>
+    </div>
+  </div>
+
+  <div class="scroll-ind">
+    <div class="si-line"></div>
+    <div class="si-dot"></div>
+  </div>
+</div>
+
+<!-- PARALLAX TICKER STRIP -->
+<div style="overflow:hidden;border-top:1px solid rgba(201,168,76,.08);border-bottom:1px solid rgba(201,168,76,.08);padding:.85rem 0;background:var(--deep)">
+  <div style="display:flex;animation:tickerMove 30s linear infinite;white-space:nowrap">
+    <span style="display:inline-flex;gap:4rem;padding-right:4rem;font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(201,168,76,.3)">
+      <span>Growth Tracking</span><span style="color:rgba(232,228,218,.15)">·</span>
+      <span>Competitor Intelligence</span><span style="color:rgba(232,228,218,.15)">·</span>
+      <span>Grant Matching</span><span style="color:rgba(232,228,218,.15)">·</span>
+      <span>Investor Readiness</span><span style="color:rgba(232,228,218,.15)">·</span>
+      <span>Founder Memory</span><span style="color:rgba(232,228,218,.15)">·</span>
+      <span>AI Guidance</span><span style="color:rgba(232,228,218,.15)">·</span>
+      <span>Risk Detection</span><span style="color:rgba(232,228,218,.15)">·</span>
+      <span>GTM Intelligence</span><span style="color:rgba(232,228,218,.15)">·</span>
+    </span>
+    <span style="display:inline-flex;gap:4rem;padding-right:4rem;font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(201,168,76,.3)">
+      <span>Growth Tracking</span><span style="color:rgba(232,228,218,.15)">·</span>
+      <span>Competitor Intelligence</span><span style="color:rgba(232,228,218,.15)">·</span>
+      <span>Grant Matching</span><span style="color:rgba(232,228,218,.15)">·</span>
+      <span>Investor Readiness</span><span style="color:rgba(232,228,218,.15)">·</span>
+      <span>Founder Memory</span><span style="color:rgba(232,228,218,.15)">·</span>
+      <span>AI Guidance</span><span style="color:rgba(232,228,218,.15)">·</span>
+      <span>Risk Detection</span><span style="color:rgba(232,228,218,.15)">·</span>
+      <span>GTM Intelligence</span><span style="color:rgba(232,228,218,.15)">·</span>
+    </span>
+  </div>
+</div>
+
+<!-- ── LARGE PARALLAX TEXT ── -->
+<div style="overflow:hidden;padding:4rem 0;background:var(--void)">
+  <span class="parallax-text" id="pxText">Intelligence</span>
+</div>
+
+<!-- ── CHAPTER 2: WHAT ── -->
+<section id="what" class="chapter" style="border-top:1px solid rgba(201,168,76,.08)">
+  <div class="what-split" style="max-width:1100px;margin:0 auto">
+    <div>
+      <div class="chapter-rule reveal"></div>
+      <div class="chapter-eyebrow reveal" data-d="1">Intelligence Engine</div>
+      <h2 class="what-h reveal" data-d="2">Not another<br>dashboard.<br><em>A partner.</em></h2>
+      <p class="what-body reveal" data-d="3">Mr. Owl learns how your startup works — your GTM, your goals, your market, your competitors, your growth patterns. Then it helps you make better decisions before problems become expensive.</p>
+      <div class="what-attrs reveal" data-d="4">
+        <div class="wa">
+          <div class="wa-line"></div>
+          <div class="wa-text"><strong>Startup-specific memory</strong>Learns your history, tracks your decisions, gives advice that knows your context.</div>
+        </div>
+        <div class="wa">
+          <div class="wa-line"></div>
+          <div class="wa-text"><strong>Real-time competitive watch</strong>Monitors competitor signals — ads, hiring, pricing, funding — before you notice.</div>
+        </div>
+        <div class="wa">
+          <div class="wa-line"></div>
+          <div class="wa-text"><strong>Indian ecosystem intelligence</strong>2,500+ grants. DPIIT. State schemes. Tracked and matched continuously.</div>
+        </div>
+        <div class="wa">
+          <div class="wa-line"></div>
+          <div class="wa-text"><strong>Proactive — not reactive</strong>Doesn't wait for you to ask. Alerts you when something shifts.</div>
+        </div>
+      </div>
+    </div>
+    <div class="orbital-wrap reveal" data-d="2">
+      <canvas id="orbCanvas"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- ── CHAPTER 3: SIGNALS ── -->
+<section id="signals" class="chapter">
+  <div style="max-width:1000px;margin:0 auto">
+    <div class="signals-intro">
+      <div class="chapter-rule reveal"></div>
+      <div class="chapter-eyebrow reveal" data-d="1">What Mr. Owl Tracks</div>
+      <h2 class="sig-h reveal" data-d="2">Watches what<br>founders <em>usually miss.</em></h2>
+    </div>
+    <div class="signal-list">
+      <div class="signal-row reveal">
+        <span class="sr-num">01</span>
+        <span class="sr-name">Growth</span>
+        <div>
+          <div class="sr-desc">CAC, ROAS, retention curves, funnel leaks, traffic patterns, MRR velocity. Tracked continuously, compared week-over-week.</div>
+          <div class="sr-tags"><span class="sr-tag">CAC</span><span class="sr-tag">Retention</span><span class="sr-tag">ROAS</span><span class="sr-tag">Funnel</span></div>
+        </div>
+      </div>
+      <div class="signal-row reveal" data-d="1">
+        <span class="sr-num">02</span>
+        <span class="sr-name">Competitors</span>
+        <div>
+          <div class="sr-desc">Meta Ads Library monitoring, pricing shifts, hiring spikes, landing page changes, LinkedIn content activity, funding announcements.</div>
+          <div class="sr-tags"><span class="sr-tag">Meta Ads</span><span class="sr-tag">Pricing</span><span class="sr-tag">Hiring</span><span class="sr-tag">Funding</span></div>
+        </div>
+      </div>
+      <div class="signal-row reveal" data-d="2">
+        <span class="sr-num">03</span>
+        <span class="sr-name">Grants</span>
+        <div>
+          <div class="sr-desc">2,500+ central and state schemes. DPIIT, MSME, incubator windows. Deadline alerts. Eligibility matched to your stage and sector.</div>
+          <div class="sr-tags"><span class="sr-tag">DPIIT</span><span class="sr-tag">MSME</span><span class="sr-tag">State Grants</span><span class="sr-tag">Deadlines</span></div>
+        </div>
+      </div>
+      <div class="signal-row reveal" data-d="3">
+        <span class="sr-num">04</span>
+        <span class="sr-name">Investor Readiness</span>
+        <div>
+          <div class="sr-desc">Deck clarity, traction narrative, storytelling gaps, funding preparedness. Scored and updated as your startup evolves.</div>
+          <div class="sr-tags"><span class="sr-tag">Deck</span><span class="sr-tag">Traction</span><span class="sr-tag">Narrative</span></div>
+        </div>
+      </div>
+      <div class="signal-row reveal" data-d="4">
+        <span class="sr-num">05</span>
+        <span class="sr-name">Founder Memory</span>
+        <div>
+          <div class="sr-desc">Startup journey, previous reports, strategic decisions, growth patterns, investor goals. Advice becomes more contextual over time.</div>
+          <div class="sr-tags"><span class="sr-tag">History</span><span class="sr-tag">Goals</span><span class="sr-tag">Context</span></div>
+        </div>
+      </div>
+      <div class="signal-row reveal">
+        <span class="sr-num">06</span>
+        <span class="sr-name">AI Guidance</span>
+        <div>
+          <div class="sr-desc">GTM experiments, A/B positioning ideas, risk alerts, next actions ranked by impact. Proactive — doesn't wait to be asked.</div>
+          <div class="sr-tags"><span class="sr-tag">GTM</span><span class="sr-tag">Positioning</span><span class="sr-tag">Next Actions</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CHAPTER 4: THE FEED ── -->
+<div id="feed" style="position:relative">
+  <div class="feed-bg"></div>
+  <div class="feed-chapter">
+    <h2 class="feed-h reveal">Your startup.<br><em>Interpreted continuously.</em></h2>
+    <div class="terminal reveal" data-d="1">
+      <div class="term-bar">
+        <div class="term-dot td1"></div>
+        <div class="term-dot td2"></div>
+        <div class="term-dot td3"></div>
+        <div class="term-title">Mr. Owl · Intelligence Feed · Live</div>
+      </div>
+      <div class="term-body">
+        <div class="term-scan"></div>
+        <div id="feedContainer"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PARALLAX TEXT 2 -->
+<div style="overflow:hidden;padding:3rem 0;background:var(--void);border-top:1px solid rgba(201,168,76,.06)">
+  <span class="parallax-text" id="pxText2" style="font-size:clamp(5rem,12vw,13rem);opacity:.03">Watching</span>
+</div>
+
+<!-- ── CHAPTER 5: VS ── -->
+<section id="versus" class="chapter" style="background:var(--deep);border-top:1px solid rgba(201,168,76,.08)">
+  <div style="max-width:760px;margin:0 auto">
+    <div class="vs-intro">
+      <div class="chapter-rule reveal"></div>
+      <div class="chapter-eyebrow reveal" data-d="1">Why founders won't replace this with ChatGPT</div>
+      <h2 class="vs-h reveal" data-d="2">Generic AI vs<br><em>Mr. Owl.</em></h2>
+    </div>
+    <div class="reveal" data-d="3">
+      <table class="vs-table">
+        <thead>
+          <tr>
+            <th>Generic AI</th>
+            <th>Mr. Owl</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Generic answers to generic prompts</td><td class="td-check">Startup-specific intelligence</td></tr>
+          <tr><td>No memory — starts blank every time</td><td class="td-check">Learns your startup over time</td></tr>
+          <tr><td>No competitor tracking</td><td class="td-check">Real-time competitive intelligence</td></tr>
+          <tr><td>No grant or scheme tracking</td><td class="td-check">Indian ecosystem intelligence</td></tr>
+          <tr><td>No scoring or benchmarking</td><td class="td-check">Startup scoring across 12 dimensions</td></tr>
+          <tr><td>No founder context</td><td class="td-check">Personalised strategic guidance</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ── CHAPTER 6: VISION ── -->
+<section id="vision" class="chapter" style="padding:0;background:var(--void)">
+  <canvas id="vCanvas"></canvas>
+  <div class="vision-inner">
+    <div class="reveal">
+      <div class="chapter-eyebrow" style="justify-content:center;display:flex;margin-bottom:1.2rem">The Long Game</div>
+      <h2 class="vision-h">Building the intelligence<br>infrastructure for<br><em>Indian startups.</em></h2>
+      <p class="vision-body">Startup Kundali gives you the diagnosis.</p>
+      <p class="vision-accent">Mr. Owl stays with you every day after.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── CHAPTER 7: EARLY ACCESS ── -->
+<section id="ea" class="chapter" style="position:relative">
+  <div class="ea-num">500</div>
+  <div class="ea-wrap">
+    <div class="reveal">
+      <div class="chapter-eyebrow" style="justify-content:center;margin-bottom:1.2rem">Early Access</div>
+      <h2 class="ea-h">The first <em>500 founders</em><br>will shape Mr. Owl.</h2>
+      <p class="ea-sub">Early access, private testing invites, and lifetime founder pricing. Help us build the intelligence layer Indian startups deserve.</p>
+      <div class="ea-form">
+        <input class="ea-input" type="email" id="eaEmail" placeholder="your@startup.com"/>
+        <button class="ea-btn" onclick="requestAccess()">Request Access</button>
+      </div>
+      <p class="ea-note">No spam · Invite when ready</p>
+    </div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- FOOTER -->
+<footer>
+  <a class="ft-brand" href="/">Startup Kundali</a>
+  <div class="ft-links">
+    <a href="/">Report</a>
+    <a href="/preview">Free Preview</a>
+    <a href="/onboarding">Order</a>
+    <a href="mailto:startupkundali@gmail.com">Contact</a>
+  </div>
+  <div class="ft-copy">© 2026 Startup Kundali</div>
+</footer>
+
+<script>
+/* ── EYE CANVAS (hero) ── */
+(function(){
+  var cv = document.getElementById('eyeCanvas');
+  var ctx = cv.getContext('2d');
+  var mouse = {x:0, y:0};
+  var W, H;
+
+  function resize(){ W = cv.width = window.innerWidth; H = cv.height = window.innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+
+  window.addEventListener('mousemove', function(e){ mouse.x = e.clientX; mouse.y = e.clientY; });
+
+  var t = 0;
+  // Stars
+  var stars = [];
+  for(var i=0;i<120;i++) stars.push({x:Math.random(),y:Math.random(),r:.5+Math.random()*1.2,a:.01+Math.random()*.06,ph:Math.random()*Math.PI*2,sp:.02+Math.random()*.08});
+
+  function draw(){
+    t += 0.007;
+    ctx.clearRect(0,0,W,H);
+
+    // Deep gradient bg
+    var bg = ctx.createRadialGradient(W*.5, H*.42, 0, W*.5, H*.42, Math.max(W,H)*.7);
+    bg.addColorStop(0,'rgba(8,10,22,1)');
+    bg.addColorStop(.5,'rgba(4,5,12,1)');
+    bg.addColorStop(1,'rgba(3,4,10,1)');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0,0,W,H);
+
+    // Stars
+    stars.forEach(function(s){
+      var a = s.a * (.5 + .5*Math.sin(t*s.sp + s.ph));
+      ctx.beginPath(); ctx.arc(s.x*W, s.y*H, s.r, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(232,228,218,'+a+')'; ctx.fill();
+    });
+
+    // Owl eye position (centre of screen, follows mouse subtly)
+    var ex = W * .62, ey = H * .42;
+    var dx = (mouse.x - ex) * .08, dy = (mouse.y - ey) * .08;
+    var px = ex + Math.max(-30, Math.min(30, dx));
+    var py = ey + Math.max(-20, Math.min(20, dy));
+
+    // Outer atmospheric glow
+    var atmos = ctx.createRadialGradient(ex, ey, 0, ex, ey, 320);
+    atmos.addColorStop(0, 'rgba(201,168,76,.025)');
+    atmos.addColorStop(.5, 'rgba(201,168,76,.01)');
+    atmos.addColorStop(1, 'rgba(201,168,76,0)');
+    ctx.fillStyle = atmos; ctx.beginPath(); ctx.arc(ex, ey, 320, 0, Math.PI*2); ctx.fill();
+
+    // Concentric rings — slow breathe
+    var breathe = .5 + .5*Math.sin(t*.4);
+    [200, 148, 104, 68, 40].forEach(function(r, i){
+      ctx.beginPath(); ctx.arc(ex, ey, r * (1 + breathe*.015), 0, Math.PI*2);
+      var op = [.04,.07,.1,.14,.2][i];
+      ctx.strokeStyle = 'rgba(201,168,76,'+op+')'; ctx.lineWidth = .8; ctx.stroke();
+    });
+
+    // Rotating tick marks on outer ring
+    for(var i=0;i<24;i++){
+      var a = t*.08 + (i/24)*Math.PI*2;
+      var inner = 196, outer = i%6===0 ? 208 : 202;
+      ctx.beginPath();
+      ctx.moveTo(ex + Math.cos(a)*inner, ey + Math.sin(a)*inner);
+      ctx.lineTo(ex + Math.cos(a)*outer, ey + Math.sin(a)*outer);
+      ctx.strokeStyle = 'rgba(201,168,76,'+(i%6===0?.22:.1)+')'; ctx.lineWidth = .8; ctx.stroke();
+    }
+
+    // Orbiting dots
+    [{r:148,sp:.4,c:'45,181,138'},{r:104,sp:-.28,c:'201,168,76'},{r:68,sp:.18,c:'217,64,64'}].forEach(function(d){
+      var a = t*d.sp;
+      var ox = ex + Math.cos(a)*d.r, oy = ey + Math.sin(a)*d.r;
+      // Dot glow
+      var dg = ctx.createRadialGradient(ox,oy,0,ox,oy,8);
+      dg.addColorStop(0,'rgba('+d.c+',.6)'); dg.addColorStop(1,'rgba('+d.c+',0)');
+      ctx.beginPath(); ctx.arc(ox,oy,8,0,Math.PI*2); ctx.fillStyle=dg; ctx.fill();
+      ctx.beginPath(); ctx.arc(ox,oy,3,0,Math.PI*2); ctx.fillStyle='rgba('+d.c+',.9)'; ctx.fill();
+    });
+
+    // Iris
+    var irisR = 36 * (1 + breathe*.04);
+    var irisG = ctx.createRadialGradient(px-4, py-4, 2, px, py, irisR);
+    irisG.addColorStop(0,'rgba(201,168,76,.45)'); irisG.addColorStop(.6,'rgba(201,168,76,.12)'); irisG.addColorStop(1,'rgba(201,168,76,0)');
+    ctx.beginPath(); ctx.arc(px, py, irisR, 0, Math.PI*2); ctx.fillStyle=irisG; ctx.fill();
+    ctx.beginPath(); ctx.arc(px, py, irisR, 0, Math.PI*2);
+    ctx.strokeStyle = 'rgba(201,168,76,.28)'; ctx.lineWidth = 1.2; ctx.stroke();
+
+    // Pupil
+    var pupilG = ctx.createRadialGradient(px-3, py-3, 1, px, py, 14);
+    pupilG.addColorStop(0,'rgba(201,168,76,.7)'); pupilG.addColorStop(1,'rgba(201,168,76,.08)');
+    ctx.beginPath(); ctx.arc(px, py, 14, 0, Math.PI*2); ctx.fillStyle=pupilG; ctx.fill();
+
+    // Specular
+    ctx.beginPath(); ctx.arc(px-5, py-5, 4, 0, Math.PI*2);
+    ctx.fillStyle='rgba(255,255,255,.18)'; ctx.fill();
+
+    // Scan line emanating from eye
+    var scanA = t*.6;
+    var sx = ex + Math.cos(scanA)*400, sy = ey + Math.sin(scanA)*400;
+    var scanG = ctx.createLinearGradient(px, py, sx, sy);
+    scanG.addColorStop(0,'rgba(201,168,76,.12)'); scanG.addColorStop(1,'rgba(201,168,76,0)');
+    ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(sx, sy);
+    ctx.strokeStyle=scanG; ctx.lineWidth=.6; ctx.stroke();
+
+    // Vignette
+    var vig = ctx.createRadialGradient(W/2, H/2, H*.3, W/2, H/2, H*.8);
+    vig.addColorStop(0,'rgba(3,4,10,0)'); vig.addColorStop(1,'rgba(3,4,10,.75)');
+    ctx.fillStyle=vig; ctx.fillRect(0,0,W,H);
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ── ORBITAL CANVAS ── */
+(function(){
+  var cv = document.getElementById('orbCanvas'); if(!cv) return;
+  var ctx = cv.getContext('2d');
+  var t = 0;
+  var W = 380, H = 380, cx = 190, cy = 190;
+  cv.width = W; cv.height = H;
+
+  var nodes = [
+    {label:'GTM',r:140,sp:.18,ph:0,c:'201,168,76'},
+    {label:'Grants',r:140,sp:.18,ph:2.1,c:'45,181,138'},
+    {label:'Risk',r:140,sp:.18,ph:4.2,c:'217,64,64'},
+    {label:'Growth',r:90,sp:-.28,ph:.8,c:'74,144,217'},
+    {label:'Compete',r:90,sp:-.28,ph:3.0,c:'201,168,76'},
+    {label:'Memory',r:50,sp:.44,ph:1.5,c:'45,181,138'},
+  ];
+
+  function draw(){
+    t += .008;
+    ctx.clearRect(0,0,W,H);
+
+    // Rings
+    [50,90,140].forEach(function(r, i){
+      ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2);
+      ctx.strokeStyle='rgba(201,168,76,'+(i===2?.08:i===1?.12:.18)+')';
+      ctx.lineWidth=.7; ctx.setLineDash([2,8]); ctx.stroke(); ctx.setLineDash([]);
+    });
+
+    // Center
+    var cg = ctx.createRadialGradient(cx,cy,0,cx,cy,20);
+    cg.addColorStop(0,'rgba(201,168,76,.5)'); cg.addColorStop(1,'rgba(201,168,76,0)');
+    ctx.beginPath(); ctx.arc(cx,cy,20,0,Math.PI*2); ctx.fillStyle=cg; ctx.fill();
+    ctx.beginPath(); ctx.arc(cx,cy,6,0,Math.PI*2); ctx.fillStyle='rgba(201,168,76,.8)'; ctx.fill();
+
+    // Connection lines between nodes
+    var positions = nodes.map(function(n){
+      var a = n.ph + t*n.sp;
+      return {x: cx+Math.cos(a)*n.r, y: cy+Math.sin(a)*n.r, c:n.c};
+    });
+    positions.forEach(function(p,i){
+      positions.forEach(function(q,j){
+        if(j<=i) return;
+        var dist = Math.hypot(p.x-q.x, p.y-q.y);
+        if(dist>140) return;
+        ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y);
+        ctx.strokeStyle='rgba(201,168,76,'+(0.06*(1-dist/140))+')';
+        ctx.lineWidth=.6; ctx.stroke();
+      });
+    });
+
+    // Node dots
+    nodes.forEach(function(n,i){
+      var a = n.ph + t*n.sp;
+      var ox = cx+Math.cos(a)*n.r, oy = cy+Math.sin(a)*n.r;
+      var pulse = .5+.5*Math.sin(t*1.5+i);
+      // Glow
+      var ng = ctx.createRadialGradient(ox,oy,0,ox,oy,10+pulse*4);
+      ng.addColorStop(0,'rgba('+n.c+',.5)'); ng.addColorStop(1,'rgba('+n.c+',0)');
+      ctx.beginPath(); ctx.arc(ox,oy,10+pulse*4,0,Math.PI*2); ctx.fillStyle=ng; ctx.fill();
+      // Dot
+      ctx.beginPath(); ctx.arc(ox,oy,3.5,0,Math.PI*2);
+      ctx.fillStyle='rgba('+n.c+','+(.7+.3*pulse)+')'; ctx.fill();
+      // Label
+      ctx.fillStyle='rgba(232,228,218,'+(.25+.25*pulse)+')';
+      ctx.font='500 10px DM Mono, monospace';
+      var lx = ox + Math.cos(a)*16, ly = oy + Math.sin(a)*16;
+      ctx.fillText(n.label, lx-ctx.measureText(n.label).width/2, ly+4);
+    });
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ── FEED ── */
+(function(){
+  var entries = [
+    {t:'09:47',icon:'⚠',cls:'fe-alert',bold:'CAC increased 22% since last month.',body:'Check paid acquisition channels. Cost-per-install from Meta has risen disproportionately.',note:'Detected via growth tracking · 14-day window'},
+    {t:'09:39',icon:'📈',cls:'fe-intel',bold:'Two competitors shifted to founder-led content.',body:'Messaging now emphasises personal brand over product features — positioning shift detected.',note:'Meta Ads Library · LinkedIn signal'},
+    {t:'09:31',icon:'🏛',cls:'fe-grant',bold:'Maharashtra EV Innovation Subsidy — ₹15L.',body:'You likely qualify. Application window open until March 31. Priority: high.',note:'Scheme eligibility matched · MSME Portal'},
+    {t:'09:24',icon:'🧠',cls:'fe-warn',bold:'Investor narrative is too feature-heavy.',body:'Simplify positioning before next pitch. Lead with the problem, not the product.',note:'Deck analysis · Investor readiness score'},
+    {t:'09:17',icon:'📉',cls:'fe-alert',bold:'Funnel drop: onboarding step 2 → 3.',body:'34% abandonment. Users dropping at the "connect data" step. Consider reducing friction.',note:'Retention tracking · Cohort analysis'},
+    {t:'09:09',icon:'🔥',cls:'fe-intel',bold:'Competitor ad frequency increased 4× this week.',body:'New performance campaign launched. Creative angle: "free trial, no credit card".',note:'Meta Ads Library · Competitive watch'},
+  ];
+
+  var container = document.getElementById('feedContainer'); if(!container) return;
+
+  entries.forEach(function(e, i){
+    var el = document.createElement('div');
+    el.className = 'feed-entry ' + e.cls;
+    el.style.animationDelay = (i*.22 + .4) + 's';
+    el.innerHTML =
+      '<span class="fe-time">'+e.t+'</span>'+
+      '<span class="fe-icon">'+e.icon+'</span>'+
+      '<div class="fe-body"><strong>'+e.bold+'</strong>'+e.body+'<span class="note">'+e.note+'</span></div>';
+    container.appendChild(el);
+  });
+
+  var cur = document.createElement('div');
+  cur.style.cssText = 'padding:.95rem 0;padding-left:'.concat('133px', ';position:relative;z-index:1');
+  cur.innerHTML = '<span class="cursor"></span>';
+  container.appendChild(cur);
+})();
+
+/* ── VISION CANVAS ── */
+(function(){
+  var cv = document.getElementById('vCanvas'); if(!cv) return;
+  var ctx = cv.getContext('2d');
+  var W, H, t = 0;
+  function resize(){ W = cv.width = cv.offsetWidth; H = cv.height = cv.offsetHeight; }
+  resize(); window.addEventListener('resize', resize);
+
+  var pts = ['Founders','Investors','Grants','Markets','Competitors','GTM','IP'].map(function(l,i){
+    var a = (i/7)*Math.PI*2;
+    return {x:.5+Math.cos(a)*.32, y:.5+Math.sin(a)*.36, label:l, ph:Math.random()*Math.PI*2};
+  });
+
+  function draw(){
+    t += .004;
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = '#000'; ctx.fillRect(0,0,W,H);
+
+    // Radial glow at center
+    var g = ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,200);
+    g.addColorStop(0,'rgba(201,168,76,.06)'); g.addColorStop(1,'rgba(201,168,76,0)');
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+
+    // Lines between all pts
+    pts.forEach(function(p,i){ pts.forEach(function(q,j){
+      if(j<=i) return;
+      var pulse = .5+.5*Math.sin(t+i*.7+j*.5);
+      ctx.beginPath(); ctx.moveTo(p.x*W,p.y*H); ctx.lineTo(q.x*W,q.y*H);
+      ctx.strokeStyle='rgba(201,168,76,'+(0.03*pulse)+')'; ctx.lineWidth=.8; ctx.stroke();
+    })});
+
+    // Center
+    var cg = ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,40);
+    cg.addColorStop(0,'rgba(201,168,76,.28)'); cg.addColorStop(1,'rgba(201,168,76,0)');
+    ctx.beginPath(); ctx.arc(W/2,H/2,40,0,Math.PI*2); ctx.fillStyle=cg; ctx.fill();
+
+    // Points
+    pts.forEach(function(p){
+      var pulse = .5+.5*Math.sin(t+p.ph);
+      var pg = ctx.createRadialGradient(p.x*W,p.y*H,0,p.x*W,p.y*H,8+pulse*4);
+      pg.addColorStop(0,'rgba(201,168,76,'+(.5*pulse)+')'); pg.addColorStop(1,'rgba(201,168,76,0)');
+      ctx.beginPath(); ctx.arc(p.x*W,p.y*H,8+pulse*4,0,Math.PI*2); ctx.fillStyle=pg; ctx.fill();
+      ctx.beginPath(); ctx.arc(p.x*W,p.y*H,3,0,Math.PI*2);
+      ctx.fillStyle='rgba(201,168,76,'+(.5+.4*pulse)+')'; ctx.fill();
+    });
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ── SCROLL REVEALS ── */
+var ro = new IntersectionObserver(function(es){
+  es.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('on'); });
+},{threshold:.06});
+document.querySelectorAll('.reveal').forEach(function(el){ ro.observe(el); });
+
+/* ── PARALLAX TEXT ── */
+window.addEventListener('scroll', function(){
+  var sy = window.scrollY;
+  var p1 = document.getElementById('pxText');
+  var p2 = document.getElementById('pxText2');
+  if(p1) p1.style.transform = 'translateX(-' + (sy * .08) + 'px)';
+  if(p2) p2.style.transform = 'translateX(' + (sy * .05) + 'px)';
+});
+
+/* ── EARLY ACCESS ── */
+window.requestAccess = function(){
+  var e = document.getElementById('eaEmail').value.trim();
+  if(!e || !e.includes('@')){ showToast('Please enter a valid email'); return; }
+  var s = encodeURIComponent('Mr. Owl Early Access — '+e);
+  var b = encodeURIComponent('Hi,\n\nPlease add me to the Mr. Owl early access list.\n\nEmail: '+e);
+  window.location.href = 'mailto:startupkundali@gmail.com?subject='+s+'&body='+b;
+  showToast('✓ Request sent — we\'ll be in touch');
+};
+
+var _tt;
+function showToast(m){
+  var el = document.getElementById('toast');
+  el.textContent=m; el.classList.add('show');
+  clearTimeout(_tt); _tt=setTimeout(function(){el.classList.remove('show');},3000);
+}
+</script>
+</body>
+</html>
